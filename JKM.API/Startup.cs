@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Reflection;
 
 namespace JKM.API
@@ -57,6 +59,30 @@ namespace JKM.API
             //INIT DATABASE CONN
             string cnn = Configuration.GetValue<string>("ConnectionStrings:DB_JKM");
             services.AddScoped<IDbConnection>(x => new SqlConnection(cnn));
+
+            //INIT SMTP EMAILS
+            services.AddTransient<SmtpClient>((serviceProvider) =>
+            {
+                IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
+                return new SmtpClient()
+                {
+                    Host = config.GetValue<String>("Smtp:Host"),
+                    Port = config.GetValue<int>("Smtp:Port"),
+                    Credentials = new NetworkCredential(config.GetValue<String>("Smtp:Username"), config.GetValue<String>("Smtp:Password")),
+                    EnableSsl = true,
+                    
+                };
+            });
+
+            services.AddTransient<MailMessage>((serviceProvider) =>
+            {
+                IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
+                return new MailMessage()
+                {
+                    From = new MailAddress(config.GetValue<string>("Smtp:From"), config.GetValue<string>("Smtp:DisplayName")),
+                    IsBodyHtml = true
+                };
+            });
 
             //MEDIATR
             Assembly assembly = AppDomain.CurrentDomain.Load("JKM.APPLICATION");
