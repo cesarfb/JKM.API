@@ -1,11 +1,10 @@
-﻿using System;
-using Dapper;
+﻿using Dapper;
 using System.Data;
 using JKM.PERSISTENCE.Utils;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using Dapper.Transaction;
 using static Dapper.SqlMapper;
+using System.Transactions;
 
 namespace JKM.PERSISTENCE.Repository.Proyecto
 {
@@ -20,27 +19,25 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 
         public async Task<ResponseModel> RegisterProyecto(ProyectoModel proyectoModel)
         {
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
                 {
                     connection.Open();
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string insert = $@"INSERT INTO Proyecto
+                    string insert = $@"INSERT INTO Proyecto
 										(nombreProyecto, fechaInicio, fechaFin, descripcion, idEstado)
 										VALUES 
 										(@NombreProyecto, @FechaInicio, @FechaFin, @Descripcion, 1);";
 
 
-                        int hasInsert = await trans.ExecuteAsync(insert);
+                    int hasInsert = await connection.ExecuteAsync(insert);
 
-                        if (hasInsert <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Error al registrar el proyecto");
+                    if (hasInsert <= 0)
+                        Handlers.ExceptionClose(connection, "Error al registrar el proyecto");
 
-                        return Handlers.CloseConnection(connection, trans, "Registro exitoso");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Registro exitoso");
                 }
                 catch (SqlException err)
                 {
@@ -58,6 +55,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 					  FROM EstadoProyecto 
 					  WHERE idEstado= {proyectoModel.IdEstado};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -70,34 +68,28 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         int existEstado = multi.ReadFirst<int>();
 
                         if (existProy <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el proyecto");
+                            Handlers.ExceptionClose(connection, "No se encontró el proyecto");
 
                         if (existEstado <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el estado");
+                            Handlers.ExceptionClose(connection, "No se encontró el estado");
                     }
 
                     if (proyectoModel.Precio > 0)
                     {
-                        using (IDbTransaction trans = connection.BeginTransaction())
-                        {
-                            string update = $@"UPDATE Venta
-			                                    SET precioTotal = @Precio
-			                                    WHERE idVenta = (SELECT idVenta 
-								                                    FROM Proyecto
-								                                    WHERE idProyecto = @IdProyecto);";
+                        string updatePrecio = $@"UPDATE Venta
+			                               SET precioTotal = @Precio
+			                               WHERE idVenta = (SELECT idVenta 
+								                            FROM Proyecto
+								                            WHERE idProyecto = @IdProyecto);";
 
-                            int hasUpdate = await trans.ExecuteAsync(update, proyectoModel);
+                        int hasUpdatePrecio = await connection.ExecuteAsync(updatePrecio, proyectoModel);
 
-                            if (hasUpdate <= 0)
-                                Handlers.ExceptionClose(connection, trans, "Error al actualizar el proyecto");
+                        if (hasUpdatePrecio <= 0)
+                            Handlers.ExceptionClose(connection, "Error al actualizar el proyecto");
 
-                            trans.Commit();
-                        }
                     }
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string update = $@"UPDATE Proyecto
+                    string update = $@"UPDATE Proyecto
 		                                    SET nombreProyecto = @Nombre,
 			                                    descripcion = @Descripcion,
 			                                    fechaInicio = @FechaInicio,
@@ -105,13 +97,12 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 			                                    idEstado = @IdEstado
 		                                    WHERE idProyecto = @IdProyecto;";
 
-                        int hasUpdate = await trans.ExecuteAsync(update, proyectoModel);
+                    int hasUpdate = await connection.ExecuteAsync(update, proyectoModel);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Error al actualizar el proyecto");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Error al actualizar el proyecto");
 
-                        return Handlers.CloseConnection(connection, trans, "Se actualizó el proyecto");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Se actualizó el proyecto");
                 }
                 catch (SqlException err)
                 {
@@ -133,6 +124,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 					  WHERE idProyecto = {idProyecto} 
 					  	AND idTrabajador = {idTrabajador};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -146,38 +138,35 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         int existTrabProy = multi.ReadFirst<int>();
 
                         if (existProy <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el proyecto");
+                            Handlers.ExceptionClose(connection, "No se encontró el proyecto");
 
                         if (existTrab <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró al trabajador");
+                            Handlers.ExceptionClose(connection, "No se encontró al trabajador");
 
                         if (existTrabProy >= 0)
-                            Handlers.ExceptionClose(connection, null, "El trabajador ya se encuentra asignado a un proyecto");
+                            Handlers.ExceptionClose(connection, "El trabajador ya se encuentra asignado a un proyecto");
                     }
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string insert = $@"INSERT INTO TrabajadorProyecto
+                    string insert = $@"INSERT INTO TrabajadorProyecto
 		                                    (idTrabajador, idProyecto)
 		                                    VALUES
 		                                    (@IdTrabajador, @IdProyecto);";
 
-                        int hasInsert = await trans.ExecuteAsync(insert, new { IdTrabajador = idTrabajador, IdProyecto = idProyecto });
+                    int hasInsert = await connection.ExecuteAsync(insert, new { IdTrabajador = idTrabajador, IdProyecto = idProyecto });
 
-                        if (hasInsert <= 0)
-                            Handlers.ExceptionClose(connection, trans, "No se pudo asignar al trabajador al proyecto");
+                    if (hasInsert <= 0)
+                        Handlers.ExceptionClose(connection, "No se pudo asignar al trabajador al proyecto");
 
-                        string update = $@"UPDATE Trabajador
+                    string update = $@"UPDATE Trabajador
 		                                    SET idEstado = 3
 		                                    WHERE idTrabajador = {idTrabajador};";
 
-                        int hasUpdate = await trans.ExecuteAsync(update);
+                    int hasUpdate = await connection.ExecuteAsync(update);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "No se pudo asignar al trabajador al proyecto");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "No se pudo asignar al trabajador al proyecto");
 
-                        return Handlers.CloseConnection(connection, trans, "Se asigno el trabajador al proyecto");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Se asigno el trabajador al proyecto");
                 }
                 catch (SqlException err)
                 {
@@ -195,6 +184,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 							FROM Trabajador 
 							WHERE idTrabajador = {idTrabajador};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -207,32 +197,29 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         int existTrabajador = multi.ReadFirst<int>();
 
                         if (existProyecto <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el proyecto");
+                            Handlers.ExceptionClose(connection, "No se encontró el proyecto");
                         if (existTrabajador <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró al trabajador");
+                            Handlers.ExceptionClose(connection, "No se encontró al trabajador");
 
-                        using (IDbTransaction trans = connection.BeginTransaction())
-                        {
-                            string delete = $@"DELETE FROM TrabajadorProyecto
+                        string delete = $@"DELETE FROM TrabajadorProyecto
 		                                    WHERE idProyecto = {idProyecto}
 			                                    AND idTrabajador = {idTrabajador};";
 
-                            int hasDelete = await connection.ExecuteAsync(delete);
+                        int hasDelete = await connection.ExecuteAsync(delete);
 
-                            if (existTrabajador <= 0)
-                                Handlers.ExceptionClose(connection, null, "Ocurrió un error al desvincular el trabajador");
+                        if (existTrabajador <= 0)
+                            Handlers.ExceptionClose(connection, "Ocurrió un error al desvincular el trabajador");
 
-                            string update = $@"UPDATE Trabajador
+                        string update = $@"UPDATE Trabajador
 		                                    SET idEstado = 2
 		                                    WHERE idTrabajador = {idTrabajador};";
 
-                            int hasUpdate = await connection.ExecuteAsync(delete);
+                        int hasUpdate = await connection.ExecuteAsync(delete);
 
-                            if (hasUpdate <= 0)
-                                Handlers.ExceptionClose(connection, null, "Ocurrió un error al desvincular el trabajador");
+                        if (hasUpdate <= 0)
+                            Handlers.ExceptionClose(connection, "Ocurrió un error al desvincular el trabajador");
 
-                            return Handlers.CloseConnection(connection, trans, "Se desvinculó al trabajador del proyecto");
-                        }
+                        return Handlers.CloseConnection(connection, trans, "Se desvinculó al trabajador del proyecto");
                     }
                 }
                 catch (SqlException err)
@@ -251,6 +238,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 					  FROM ActividadProyecto
 					  WHERE idActividad = {actividadModel.IdActividad};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -263,9 +251,9 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         int idProyecto = multi.ReadFirst<int>();
 
                         if (existAct <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la actividad");
+                            Handlers.ExceptionClose(connection, "No se encontró la actividad");
                         if (idProyecto <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el proyecto");
+                            Handlers.ExceptionClose(connection, "No se encontró el proyecto");
 
                         actividadModel.IdProyecto = idProyecto;
 
@@ -279,12 +267,10 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         int repeatActiv = await connection.ExecuteAsync(sql, actividadModel);
 
                         if (repeatActiv >= 0)
-                            Handlers.ExceptionClose(connection, null, "Ya existe una actividad con esa descripción");
+                            Handlers.ExceptionClose(connection, "Ya existe una actividad con esa descripción");
                     }
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string update = $@"UPDATE ActividadProyecto
+                    string update = $@"UPDATE ActividadProyecto
 		                                    SET descripcion = TRIM(@Descripcion),
 			                                    peso = @Peso,
 			                                    idPadre = @IdPadre,
@@ -293,12 +279,12 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 			                                    fechaFin = @FechaFin
 		                                    WHERE idActividad = @IdActividad";
 
-                        int hasUpdate = await trans.ExecuteAsync(update, actividadModel);
+                    int hasUpdate = await connection.ExecuteAsync(update, actividadModel);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Ocurrió un error al actualizar la actividad");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al actualizar la actividad");
 
-                        string updateDate = $@"DECLARE @StartDate DATE = (SELECT MIN(fechaInicio) 
+                    string updateDate = $@"DECLARE @StartDate DATE = (SELECT MIN(fechaInicio) 
 											                                FROM ActividadProyecto
 											                                WHERE idProyecto = {actividadModel.IdProyecto}),
 						                                @EndDate DATE = (SELECT MAX(fechaFin) 
@@ -310,13 +296,12 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 					                                fechaFin = @EndDate
 				                                WHERE idProyecto = @IdProyecto;";
 
-                        int hasUpdateDate = await trans.ExecuteAsync(updateDate);
+                    int hasUpdateDate = await connection.ExecuteAsync(updateDate);
 
-                        if (hasUpdateDate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Ocurrio un error al actualizar la fecha de la actividad");
+                    if (hasUpdateDate <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrio un error al actualizar la fecha de la actividad");
 
-                        return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
                 }
                 catch (SqlException err)
                 {

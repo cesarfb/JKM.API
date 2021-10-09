@@ -1,22 +1,21 @@
 ﻿using System.Data;
+using System.Transactions;
 
 namespace JKM.PERSISTENCE.Utils
 {
     public static class Handlers
     {
-        public static void ExceptionClose(IDbConnection connection, IDbTransaction transaction = null, string msg = "")
+        public static void ExceptionClose(IDbConnection connection, string msg = "")
         {
-            if (transaction != null) 
-                transaction.Rollback();
             if(connection.State != ConnectionState.Closed)
                 connection.Close();
             throw new DBConcurrencyException(msg);
         }
 
-        public static ResponseModel CloseConnection(IDbConnection connection, IDbTransaction transaction = null, string msg = "")
+        public static ResponseModel CloseConnection(IDbConnection connection, TransactionScope transaction = null, string msg = "")
         {
             if (transaction != null)
-                transaction.Commit();
+                transaction.Complete();
             if (connection.State != ConnectionState.Closed)
                 connection.Close();
 

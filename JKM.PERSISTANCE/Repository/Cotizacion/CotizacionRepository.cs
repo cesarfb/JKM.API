@@ -1,10 +1,9 @@
 ﻿using Dapper;
-using Dapper.Transaction;
 using JKM.PERSISTENCE.Utils;
-using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Transactions;
 using static Dapper.SqlMapper;
 
 namespace JKM.PERSISTENCE.Repository.Cotizacion
@@ -25,6 +24,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						    WHERE idCotizacion = {idCotizacion} 
 						    AND idEstado = 1;";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -34,21 +34,18 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     int exist = await connection.QueryFirstAsync<int>(sql);
 
                     if (exist == 0)
-                        Handlers.ExceptionClose(connection, null, "No se encontró la cotización");
+                        Handlers.ExceptionClose(connection, "No se encontró la cotización");
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string update = $@"UPDATE Cotizacion
+                    string update = $@"UPDATE Cotizacion
 		                                   SET idEstado = 2
 		                                   WHERE idCotizacion = {idCotizacion};";
 
-                        int hasUpdate = await trans.ExecuteAsync(update);
+                    int hasUpdate = await connection.ExecuteAsync(update);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Error al actualizar la cotización");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Error al actualizar la cotización");
 
-                        return Handlers.CloseConnection(connection, trans, "Se actualizó la cotización");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Se actualizó la cotización");
                 }
                 catch (SqlException err)
                 {
@@ -64,6 +61,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						    WHERE idCotizacion = { idCotizacion }
 							    AND idEstado = 1;";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -73,21 +71,18 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     int exist = await connection.QueryFirstAsync<int>(sql);
 
                     if (exist == 0)
-                        Handlers.ExceptionClose(connection, null, "No se encontró la cotización");
+                        Handlers.ExceptionClose(connection, "No se encontró la cotización");
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string update = $@"UPDATE Cotizacion
+                    string update = $@"UPDATE Cotizacion
 		                                   SET idEstado = 3
 		                                   WHERE idCotizacion = {idCotizacion};";
 
-                        int hasUpdate = await trans.ExecuteAsync(update);
+                    int hasUpdate = await connection.ExecuteAsync(update);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Error al actualizar la cotización");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Error al actualizar la cotización");
 
-                        return Handlers.CloseConnection(connection, trans, "Se actualizó la cotización");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Se actualizó la cotización");
                 }
                 catch (SqlException err)
                 {
@@ -98,26 +93,24 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 
         public async Task<ResponseModel> RegisterCotizacion(CotizacionModel cotizacionModel)
         {
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
                 {
                     connection.Open();
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string insert = $@"INSERT INTO Cotizacion 
+                    string insert = $@"INSERT INTO Cotizacion 
                                         (solicitante,descripcion,fechaSolicitud,email,empresa,idEstado)
 		                                VALUES
 		                                (@Solicitante,@Descripcion,@FechaSolicitud,@Email,@Empresa,1);";
 
-                        int hasInsert = await trans.ExecuteAsync(insert, cotizacionModel);
+                    int hasInsert = await connection.ExecuteAsync(insert, cotizacionModel);
 
-                        if (hasInsert <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Error al registrar la cotización");
+                    if (hasInsert <= 0)
+                        Handlers.ExceptionClose(connection, "Error al registrar la cotización");
 
-                        return Handlers.CloseConnection(connection, trans, "Se registró la cotización");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Se registró la cotización");
                 }
                 catch (SqlException err)
                 {
@@ -135,6 +128,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 					  FROM PrecioCotizacion 
 					  WHERE idPrecioCotizacion = {cotizacionModel.IdPrecioCotizacion};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -147,37 +141,34 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                         int hasPaid = multi.ReadFirst<int>();
 
                         if (existEstado <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el estado");
+                            Handlers.ExceptionClose(connection, "No se encontró el estado");
 
-                        using (IDbTransaction trans = connection.BeginTransaction())
+                        if (hasPaid == 0)
                         {
-                            if (hasPaid == 0)
-                            {
-                                string insert = $@"INSERT INTO PrecioCotizacion
+                            string insert = $@"INSERT INTO PrecioCotizacion
 				                                (precioCotizacion,fecha,idCotizacion) 
 				                                VALUES
 				                                (@PrecioCotizacion,GETDATE(),@IdCotizacion);";
 
-                                int hasInsert = await trans.ExecuteAsync(insert, cotizacionModel);
+                            int hasInsert = await connection.ExecuteAsync(insert, cotizacionModel);
 
-                                if (hasInsert <= 0)
-                                    Handlers.ExceptionClose(connection, trans, "Error al registrar");
+                            if (hasInsert <= 0)
+                                Handlers.ExceptionClose(connection, "Error al registrar");
 
-                            }
-                            else if (hasPaid > 0)
-                            {
-                                string updatePrice = $@"UPDATE PrecioCotizacion
+                        }
+                        else if (hasPaid > 0)
+                        {
+                            string updatePrice = $@"UPDATE PrecioCotizacion
 				                                       SET precioCotizacion = @PrecioCotizacion
 				                                       WHERE idPrecioCotizacion = @IdPrecioCotizacion;";
 
-                                int hasUpdatePrice = await trans.ExecuteAsync(updatePrice, cotizacionModel);
+                            int hasUpdatePrice = await connection.ExecuteAsync(updatePrice, cotizacionModel);
 
-                                if (hasUpdatePrice <= 0)
-                                    Handlers.ExceptionClose(connection, trans, "Error al actualizar");
-                            }
-                            trans.Commit();
+                            if (hasUpdatePrice <= 0)
+                                Handlers.ExceptionClose(connection, "Error al actualizar");
+                        }
 
-                            string update = $@"UPDATE Cotizacion	
+                        string update = $@"UPDATE Cotizacion	
 			                                    SET solicitante = @Solicitante,
 				                                    descripcion = @Descripcion,
 				                                    fechaSolicitud = @FechaSolicitud,
@@ -186,13 +177,12 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 				                                    idEstado = @IdEstado
 			                                    WHERE idCotizacion = @IdCotizacion;";
 
-                            int hasUpdate = await trans.ExecuteAsync(update, cotizacionModel);
+                        int hasUpdate = await connection.ExecuteAsync(update, cotizacionModel);
 
-                            if (hasUpdate <= 0)
-                                Handlers.ExceptionClose(connection, trans, "Error al actualizar");
+                        if (hasUpdate <= 0)
+                            Handlers.ExceptionClose(connection, "Error al actualizar");
 
-                            return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
-                        }
+                        return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
                     }
                 }
                 catch (SqlException err)
@@ -213,6 +203,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                       FROM TipoTrabajador
                       WHERE idTipoTrabajador = {trabajadorModel.IdTipoTrabajador};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -225,26 +216,23 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                         int existTipo = multi.ReadFirst<int>();
 
                         if (existCot <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la cotización solicitada");
+                            Handlers.ExceptionClose(connection, "No se encontró la cotización solicitada");
 
                         if (existTipo <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el tipo de trabajador");
+                            Handlers.ExceptionClose(connection, "No se encontró el tipo de trabajador");
                     }
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string insert = $@"INSERT INTO TipoTrabajadorCotizacion
+                    string insert = $@"INSERT INTO TipoTrabajadorCotizacion
 		                                       (idCotizacion, idTipoTrabajador, precio, cantidad)
 		                                       VALUES
 		                                       (@IdCotizacion, @IdTipo, @Precio, @Cantidad);";
 
-                        int hasInsert = await trans.ExecuteAsync(insert, trabajadorModel);
+                    int hasInsert = await connection.ExecuteAsync(insert, trabajadorModel);
 
-                        if (hasInsert <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Ocurrió un error al insertar el tipo de trabajador");
+                    if (hasInsert <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al insertar el tipo de trabajador");
 
-                        return Handlers.CloseConnection(connection, trans, "Registro exitoso");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Registro exitoso");
                 }
                 catch (SqlException err)
                 {
@@ -264,6 +252,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 					  FROM TipoTrabajador 
 				      WHERE idTipoTrabajador = {trabajadorModel.IdTipoTrabajador};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -276,28 +265,24 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                         int existTipo = multi.ReadFirst<int>();
 
                         if (existCot <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la cotización solicitada");
+                            Handlers.ExceptionClose(connection, "No se encontró la cotización solicitada");
 
                         if (existTipo <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró el tipo de trabajador");
+                            Handlers.ExceptionClose(connection, "No se encontró el tipo de trabajador");
                     }
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-
-                        string update = $@"UPDATE TipoTrabajadorCotizacion
+                    string update = $@"UPDATE TipoTrabajadorCotizacion
 		                                        SET precio = @Precio, 
 			                                        cantidad = @Cantidad
 		                                        WHERE idCotizacion = @IdCotizacion
                                                     AND idTipoTrabajador = @IdTipoTrabajador;";
 
-                        int hasUpdate = await trans.ExecuteAsync(update, trabajadorModel);
+                    int hasUpdate = await connection.ExecuteAsync(update, trabajadorModel);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Error al actualizar");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Error al actualizar");
 
-                        return Handlers.CloseConnection(connection, trans, "Actualizacion exitosa");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Actualizacion exitosa");
                 }
                 catch (SqlException err)
                 {
@@ -312,6 +297,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						    FROM TipoTrabajador 
 						    WHERE idTipoTrabajador = {idTipo};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -321,21 +307,18 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     int exist = await connection.QueryFirstAsync<int>(sql);
 
                     if (exist <= 0)
-                        Handlers.ExceptionClose(connection, null, "No se encontró el tipo de trabajador");
+                        Handlers.ExceptionClose(connection, "No se encontró el tipo de trabajador");
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string delete = $@"DELETE FROM TipoTrabajadorCotizacion
+                    string delete = $@"DELETE FROM TipoTrabajadorCotizacion
 		                                   WHERE idCotizacion = {idCotizacion}
                                                 AND idTipoTrabajador = {idTipo};";
 
-                        int hasUpdate = await trans.ExecuteAsync(delete);
+                    int hasUpdate = await connection.ExecuteAsync(delete);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Ocurrió un error al eliminar el tipo de trabajador");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al eliminar el tipo de trabajador");
 
-                        return Handlers.CloseConnection(connection, trans, "Se eliminó el tipo de trabajador");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Se eliminó el tipo de trabajador");
                 }
                 catch (SqlException err)
                 {
@@ -356,6 +339,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						AND idPadre = {actividadModel.IdPadre}
 						AND idCotizacion = {actividadModel.IdCotizacion};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -368,26 +352,23 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                         int activRepeated = multi.ReadFirst<int>();
 
                         if (exist <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la cotización solicitada");
+                            Handlers.ExceptionClose(connection, "No se encontró la cotización solicitada");
 
                         if (activRepeated > 0)
-                            Handlers.ExceptionClose(connection, null, "Ya existe una actividad con esa descripción");
+                            Handlers.ExceptionClose(connection, "Ya existe una actividad con esa descripción");
                     }
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string insert = $@"INSERT INTO ActividadProyecto
+                    string insert = $@"INSERT INTO ActividadProyecto
 		                                        (descripcion, peso, idEstado, idPadre, idHermano, idCotizacion)
 		                                        VALUES
 		                                        (TRIM(@Descripcion), @Peso, 1, @IdPadre, @IdHermano, @IdCotizacion);";
 
-                        int hasInsert = await trans.ExecuteAsync(insert, actividadModel);
+                    int hasInsert = await connection.ExecuteAsync(insert, actividadModel);
 
-                        if (hasInsert <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Ocurrió un error al insertar la actividad");
+                    if (hasInsert <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al insertar la actividad");
 
-                        return Handlers.CloseConnection(connection, trans, "Registro exitoso");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Registro exitoso");
                 }
                 catch (SqlException err)
                 {
@@ -405,6 +386,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 					  FROM ActividadProyecto
 					  WHERE idCotizacion = {actividadModel.IdCotizacion};";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -417,10 +399,10 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                         int existCoti = multi.ReadFirst<int>();
 
                         if (existAct <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la actividad solicitada");
+                            Handlers.ExceptionClose(connection, "No se encontró la actividad solicitada");
 
                         if (existCoti <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la cotización solicitada");
+                            Handlers.ExceptionClose(connection, "No se encontró la cotización solicitada");
                     }
 
                     string sqlActRepeat = $@"SELECT COUNT(1) 
@@ -433,11 +415,9 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     int isRepeated = await connection.QueryFirstAsync<int>(sqlActRepeat, actividadModel);
 
                     if (isRepeated > 0)
-                        Handlers.ExceptionClose(connection, null, "Ya existe una actividad con esa descripción");
+                        Handlers.ExceptionClose(connection, "Ya existe una actividad con esa descripción");
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string update = $@"UPDATE ActividadProyecto
+                    string update = $@"UPDATE ActividadProyecto
 		                                    SET descripcion = TRIM(@Descripcion),
 			                                    peso = @Peso,
 			                                    idPadre = @IdPadre,
@@ -445,13 +425,12 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 		                                    WHERE idActividad = @IdActividad
                                                 AND idCotizacion = @IdCotizacion;";
 
-                        int hasUpdate = await trans.ExecuteAsync(update, actividadModel);
+                    int hasUpdate = await connection.ExecuteAsync(update, actividadModel);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Ocurrió un error al actualizar la actividad");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al actualizar la actividad");
 
-                        return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
                 }
                 catch (SqlException err)
                 {
@@ -474,6 +453,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 				      WHERE idActividad = {idActividad};
                         AND idCotizacion = {idCotizacion}";
 
+            using (TransactionScope trans = new TransactionScope())
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -487,28 +467,25 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                         int existCotizacion = multi.ReadFirst<int>();
 
                         if (exist <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la actividad solicitada");
+                            Handlers.ExceptionClose(connection, "No se encontró la actividad solicitada");
 
                         if (hasChild > 0)
-                            Handlers.ExceptionClose(connection, null, "Elimine los hijos de la actividad para continuar");
+                            Handlers.ExceptionClose(connection, "Elimine los hijos de la actividad para continuar");
 
                         if (existCotizacion <= 0)
-                            Handlers.ExceptionClose(connection, null, "No se encontró la cotizacion solicitada");
+                            Handlers.ExceptionClose(connection, "No se encontró la cotizacion solicitada");
                     }
 
-                    using (IDbTransaction trans = connection.BeginTransaction())
-                    {
-                        string delete = $@"DELETE FROM ActividadProyecto
+                    string delete = $@"DELETE FROM ActividadProyecto
 		                                        WHERE idActividad = {idActividad};
                                                     AND idCotizacion = {idCotizacion}";
 
-                        int hasDelete = await trans.ExecuteAsync(delete);
+                    int hasDelete = await connection.ExecuteAsync(delete);
 
-                        if (hasDelete <= 0)
-                            Handlers.ExceptionClose(connection, trans, "Ocurrió un error al eliminar la actividad");
+                    if (hasDelete <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al eliminar la actividad");
 
-                        return Handlers.CloseConnection(connection, trans, "Se eliminó el tipo de trabajador");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Se eliminó el tipo de trabajador");
                 }
                 catch (SqlException err)
                 {

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -64,17 +63,6 @@ namespace JKM.PERSISTENCE.GlobalErrorHandling
                 var result = JsonSerializer.Serialize(error);
                 await response.WriteAsync(result);
             }
-        }
-    }
-    public class AppException : Exception
-    {
-        public AppException() : base() { }
-
-        public AppException(string message) : base(message) { }
-
-        public AppException(string message, params object[] args)
-            : base(String.Format(CultureInfo.CurrentCulture, message, args))
-        {
         }
     }
 }
