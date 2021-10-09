@@ -29,7 +29,7 @@ namespace JKM.API.Controllers
         [HttpGet]
         [SwaggerOperation("Trae los trabajadores por página")]
         [SwaggerResponse(200, "Retorna los trabajadores", typeof(PaginadoResponse<TrabajadorModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadorPaginado([FromQuery] GetTrabajadoresPaginadoQuery request)
         {
             try
@@ -47,7 +47,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idTrabajador}")]
         [SwaggerOperation("Retorna un trabajador en base a su Id")]
         [SwaggerResponse(200, "Retorna el trabajador", typeof(TrabajadorModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadorById(int idTrabajador)
         {
             try
@@ -63,7 +63,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idEstado}")]
         [SwaggerOperation("Retorna los trabajadores en base al estado")]
         [SwaggerResponse(200, "Retorna los trabajadores", typeof(IEnumerable<TrabajadorModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadorByEstado(int idEstado)
         {
             try
@@ -79,7 +79,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "Estado")]
         [SwaggerOperation("Retorna los estados de trabajadores")]
         [SwaggerResponse(200, "Retorna los estados", typeof(IEnumerable<Identifier>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetEstadoTrabajador()
         {
             try
@@ -97,7 +97,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "Tipo")]
         [SwaggerOperation("Retorna los tipos de trabajadores")]
         [SwaggerResponse(200, "Retorna los tipos", typeof(IEnumerable<Identifier>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTipoTrabajador()
         {
             GetTipoTrabajadorQuery request = new GetTipoTrabajadorQuery();

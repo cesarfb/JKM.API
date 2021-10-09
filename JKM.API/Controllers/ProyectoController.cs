@@ -34,7 +34,7 @@ namespace JKM.API.Controllers
         [HttpGet]
         [SwaggerOperation("Retorna los proyectos por página")]
         [SwaggerResponse(200, "Retorna los proyectos", typeof(PaginadoResponse<ProyectoModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetProyectoPaginado([FromQuery] GetProyectoPaginadoQuery request)
         {
             try
@@ -50,7 +50,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idProyecto}")]
         [SwaggerOperation("Retorna un proyecto en base a su Id")]
         [SwaggerResponse(200, "Retorna un proyecto", typeof(ProyectoModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetProyectoById(int idProyecto)
         {
             try
@@ -66,7 +66,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "Estado")]
         [SwaggerOperation("Retorna los estados de los proyectos")]
         [SwaggerResponse(200, "Retorna los estados", typeof(ProyectoModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetEstadosProyecto()
         {
             GetEstadosProyectoQuery request = new GetEstadosProyectoQuery();
@@ -83,7 +83,7 @@ namespace JKM.API.Controllers
         [HttpPost()]
         [SwaggerOperation("Registra un nuevo proyecto")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterProyecto([FromBody] RegisterProyectoCommand request)
         {
             try
@@ -99,7 +99,7 @@ namespace JKM.API.Controllers
         [HttpPut(template: "{idProyecto}")]
         [SwaggerOperation("Actualiza un proyecto en base a su Id")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateProyecto(int idProyecto, [FromBody] UpdateProyectoCommand request)
         {
             try
@@ -116,7 +116,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idProyecto}/Trabajadores")]
         [SwaggerOperation("Retorna a los trabajadores para un proyecto")]
         [SwaggerResponse(200, "Retorna los trabajador y sus cantidades", typeof(TrabajadorProyectoModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadoresByProyecto(int idProyecto)
         {
             try
@@ -132,7 +132,7 @@ namespace JKM.API.Controllers
         [HttpPost(template: "{idProyecto}/Trabajadores")]
         [SwaggerOperation("Asigna un trabajador y su precio a un proyecto")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterTrabajadorByProyecto(int idProyecto, [FromBody] RegisterTrabajadorByProyectoCommand request)
         {
             try
@@ -149,7 +149,7 @@ namespace JKM.API.Controllers
         [HttpDelete(template: "{idProyecto}/Trabajadores/{idTrabajador}")]
         [SwaggerOperation("Elimina el trabajador del proyecto en base a sus id's")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> DeleteTrabajadorByProyecto(int idProyecto, int idTrabajador)
         {
             try
@@ -170,7 +170,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idProyecto}/Actividades")]
         [SwaggerOperation("Retorna las actividades de un proyecto")]
         [SwaggerResponse(200, "Retorna las actividades", typeof(IEnumerable<ActividadCotizacionModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetActividadesByProyecto(int idProyecto)
         {
             try
@@ -186,7 +186,7 @@ namespace JKM.API.Controllers
         [HttpPut(template: "{idProyecto}/Actividades/{idActividad}")]
         [SwaggerOperation("Actualiza una actividad de un proyecto")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateActividadByProyecto(int idProyecto, int idActividad, [FromBody] UpdateActividadByProyectoCommand request)
         {
             try

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using JKM.PERSISTENCE.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using FluentValidation;
 
 namespace JKM.APPLICATION.Commands.Cotizacion.DeleteActividadCotizacion
 {
@@ -10,5 +11,15 @@ namespace JKM.APPLICATION.Commands.Cotizacion.DeleteActividadCotizacion
         public int IdActividad { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public int IdCotizacion { get; set; }
+    }
+    public class Validator : AbstractValidator<DeleteActividadCotizacionCommand>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.IdActividad)
+                .GreaterThan(0).WithMessage("La IdActividad debe ser un entero positivo");
+            RuleFor(x => x.IdCotizacion)
+                .GreaterThan(0).WithMessage("La IdCotizacion debe ser un entero positivo");
+        }
     }
 }

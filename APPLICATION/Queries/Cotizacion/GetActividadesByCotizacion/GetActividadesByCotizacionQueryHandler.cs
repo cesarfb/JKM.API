@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using FluentValidation;
-using FluentValidation.Results;
 using JKM.APPLICATION.Aggregates;
-using JKM.PERSISTENCE.Utils;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,9 +22,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
 
         public async Task<IEnumerable<ActividadCotizacionModel>> Handle(GetActividadesByCotizacionQuery request, CancellationToken cancellationToken)
         {
-            ValidationResult validator = new Validator().Validate(request);
-            Handlers.HandlerException(validator);
-
             string sql = $@"SELECT AP.idActividad, AP.descripcion, AP.fechaInicio, AP.fechaFin,
 		                        AP.peso, AP.idPadre, AP.idHermano,
 		                        EA.idEstado, EA.descripcion 'descripcionEstado'
@@ -79,15 +74,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
                 {
                     throw err;
                 }
-            }
-        }
-
-        private class Validator : AbstractValidator<GetActividadesByCotizacionQuery>
-        {
-            public Validator()
-            {
-                RuleFor(x => x.IdCotizacion)
-                    .GreaterThan(0).WithMessage("El IdCotizacion debe ser un entero positivo");
             }
         }
     }

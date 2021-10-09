@@ -1,8 +1,5 @@
 ﻿using Dapper;
-using FluentValidation;
-using FluentValidation.Results;
 using JKM.APPLICATION.Aggregates;
-using JKM.PERSISTENCE.Utils;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -23,9 +20,6 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetTrabajadoresByProyecto
 
 		public async Task<IEnumerable<TrabajadorProyectoModel>> Handle(GetTrabajadoresByProyectoQuery request, CancellationToken cancellationToken)
 		{
-			ValidationResult validator = new Validator().Validate(request);
-			Handlers.HandlerException(validator);
-
 			string sql = $@"SELECT T.idTrabajador, TT.idTipoTrabajador, TT.descripcion 'descripcionTipo',
 								DU.nombre, DU.apellido, DU.fechaNacimiento
 							FROM TrabajadorProyecto TP
@@ -56,16 +50,5 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetTrabajadoresByProyecto
 				}
 			}
 		}
-
-
-		private class Validator : AbstractValidator<GetTrabajadoresByProyectoQuery>
-		{
-			public Validator()
-			{
-				RuleFor(x => x.IdProyecto)
-					.GreaterThan(0).WithMessage("El IdProyecto debe ser un entero positivo");
-			}
-		}
 	}
 }
-

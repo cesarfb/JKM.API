@@ -28,7 +28,7 @@ namespace JKM.API.Controllers
         [HttpGet]
         [SwaggerOperation("Retorna las ventas por pagina")]
         [SwaggerResponse(200, "Retorna las ventas", typeof(IEnumerable<VentaModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetVentaPaginado([FromQuery] GetVentaPaginadoQuery request)
         {
             try
@@ -44,7 +44,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idVenta}")]
         [SwaggerOperation("Retorna una venta en base a su Id")]
         [SwaggerResponse(200, "Retorna la venta", typeof(VentaModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetVentaById([FromQuery] GetVentaByIdQuery request)
         {
             try
@@ -60,7 +60,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "Estado")]
         [SwaggerOperation("Retorna los estados de ventas")]
         [SwaggerResponse(200, "Retorna los estados", typeof(IEnumerable<Identifier>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetEstadosVenta()
         {
             try
@@ -76,7 +76,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "Tipo")]
         [SwaggerOperation("Retorna los tipos de ventas")]
         [SwaggerResponse(200, "Retorna los tipos", typeof(IEnumerable<Identifier>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTiposVenta()
         {
             try
@@ -92,7 +92,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idVenta}/Cuotas")]
         [SwaggerOperation("Retorna cuotas de una venta en base a su id")]
         [SwaggerResponse(200, "Retorna las cuotas", typeof(IEnumerable<Identifier>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetCuotasVentaById(int idVenta)
         {
             try

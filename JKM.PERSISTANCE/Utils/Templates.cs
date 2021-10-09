@@ -1,6 +1,7 @@
 ﻿using JKM.PERSISTENCE.Repository.Notification;
 using System;
 using System.IO;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace JKM.PERSISTENCE.Utils
 {
@@ -22,11 +23,11 @@ namespace JKM.PERSISTENCE.Utils
 
         public static Byte[] ContactUsPdf(NotificationModel model)
         {
-            Byte[] res = null;
+            Byte[] res;
             string html = ContactUsHtml(model);
             using (MemoryStream ms = new MemoryStream())
             {
-                var pdf = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(html, PdfSharp.PageSize.A4);
+                var pdf = PdfGenerator.GeneratePdf(html, PdfSharp.PageSize.A4);
                 pdf.Save(ms);
                 res = ms.ToArray();
             }

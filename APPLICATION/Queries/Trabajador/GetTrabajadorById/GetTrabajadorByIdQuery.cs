@@ -1,8 +1,6 @@
-﻿using JKM.APPLICATION.Aggregates;
+﻿using FluentValidation;
+using JKM.APPLICATION.Aggregates;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadorById
 {
@@ -10,4 +8,13 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadorById
     {
         public int IdTrabajador { get; set; }
     }
+
+	public class Validator : AbstractValidator<GetTrabajadorByIdQuery>
+	{
+		public Validator()
+		{
+			RuleFor(x => x.IdTrabajador)
+				.GreaterThan(0).WithMessage("El IdTrabajador debe ser un entero positivo");
+		}
+	}
 }

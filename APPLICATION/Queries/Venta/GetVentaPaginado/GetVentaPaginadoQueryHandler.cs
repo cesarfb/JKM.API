@@ -1,6 +1,4 @@
 ﻿using Dapper;
-using FluentValidation;
-using FluentValidation.Results;
 using JKM.APPLICATION.Aggregates;
 using JKM.PERSISTENCE.Utils;
 using MediatR;
@@ -22,9 +20,6 @@ namespace JKM.APPLICATION.Queries.Venta.GetVentaPaginado
 
         public async Task<PaginadoResponse<VentaModel>> Handle(GetVentaPaginadoQuery request, CancellationToken cancellationToken)
         {
-            ValidationResult validator = new Validator().Validate(request);
-            Handlers.HandlerException(validator);
-
             string sql = $@"SELECT COUNT(1) FROM Venta";
 
             sql += $@"SELECT V.idVenta, V.precioTotal, V.fechaRegistro,
@@ -61,17 +56,6 @@ namespace JKM.APPLICATION.Queries.Venta.GetVentaPaginado
                 {
                     throw err;
                 }
-            }
-        }
-
-        private class Validator : AbstractValidator<GetVentaPaginadoQuery>
-        {
-            public Validator()
-            {
-                RuleFor(x => x.Pages)
-                    .GreaterThan(0).WithMessage("La cantidad de paginas debe ser un entero positivo");
-                RuleFor(x => x.Rows)
-                    .GreaterThan(0).WithMessage("La cantidad de registros debe ser un entero positivo");
             }
         }
     }

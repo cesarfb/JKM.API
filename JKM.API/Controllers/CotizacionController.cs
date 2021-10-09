@@ -37,7 +37,8 @@ namespace JKM.API.Controllers
         [HttpGet]
         [SwaggerOperation("Retorna las cotizaciones por página")]
         [SwaggerResponse(200, "Retorna las cotizaciones", typeof(PaginadoResponse<CotizacionModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(204, "No se encontraron cotizaciones")]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetCotizacionPaginado([FromQuery] GetCotizacionPaginadoQuery request)
         {
             return Ok(await _mediator.Send(request));
@@ -46,7 +47,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idCotizacion}")]
         [SwaggerOperation("Retorna una cotizacion en base a su Id")]
         [SwaggerResponse(200, "Retorna la cotizacion", typeof(CotizacionModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetCotizacionById(int idCotizacion)
         {
             return Ok(await _mediator.Send(new GetCotizacionByIdQuery { IdCotizacion = idCotizacion }));
@@ -55,7 +56,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "Estado")]
         [SwaggerOperation("Retorna los estados de las cotizaciones")]
         [SwaggerResponse(200, "Retorna los estados", typeof(IEnumerable<Identifier>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetEstadoCotizacion()
         {
             return Ok(await _mediator.Send(new GetEstadoCotizacionQuery()));
@@ -64,7 +65,7 @@ namespace JKM.API.Controllers
         [HttpPut(template: "{idCotizacion}/Aceptar")]
         [SwaggerOperation("Acepta la creacion de un proyecto")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> Aceptar(int idCotizacion)
         {
             return Ok(await _mediator.Send(new AceptarCotizacionCommand { IdCotizacion = idCotizacion }));
@@ -73,7 +74,7 @@ namespace JKM.API.Controllers
         [HttpPut(template: "{idCotizacion}/Rechazar")]
         [SwaggerOperation("Rechaza la creacion de un proyecto")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RechazarCotizacion(int idCotizacion)
         {
             return Ok(await _mediator.Send(new RechazarCotizacionCommand { IdCotizacion = idCotizacion }));
@@ -82,7 +83,7 @@ namespace JKM.API.Controllers
         [HttpPost]
         [SwaggerOperation("Registra una nueva cotizacion")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterCotizacion([FromBody] RegisterCotizacionCommand request)
         {
             return Ok(await _mediator.Send(request));
@@ -91,7 +92,7 @@ namespace JKM.API.Controllers
         [HttpPut(template: "{idCotizacion}")]
         [SwaggerOperation("Actualiza una cotizacion en base a su Id")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateCotizacion(int idCotizacion, [FromBody] UpdateCotizacionCommand request)
         {
             request.IdCotizacion = idCotizacion;
@@ -101,7 +102,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idCotizacion}/Trabajadores")]
         [SwaggerOperation("Retorna a los tipos de trabajadores para una cotizacion")]
         [SwaggerResponse(200, "Retorna los tipos de trabajador y sus cantidades", typeof(IEnumerable<TipoTrabajadorModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadoresByCotizacion(int idCotizacion)
         {
             return Ok(await _mediator.Send(new GetTrabajadoresByCotizacionQuery { IdCotizacion = idCotizacion}));
@@ -110,7 +111,7 @@ namespace JKM.API.Controllers
         [HttpPost(template: "{idCotizacion}/Trabajadores")]
         [SwaggerOperation("Asigna un tipo de trabajador y su cantidad a una cotizacion")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterTrabajadorCotizacion(int idCotizacion, [FromBody] RegisterTrabajadorCotizacionCommand request)
         {
             request.IdCotizacion = idCotizacion;
@@ -120,7 +121,7 @@ namespace JKM.API.Controllers
         [HttpPut(template: "{idCotizacion}/Trabajadores/{idTipoTrabajador}")]
         [SwaggerOperation("Actualiza el tipo de trabajador y su cantidad de una cotizacion")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateTrabajadorCotizacion(int idCotizacion, int idTipoTrabajador, [FromBody] UpdateTrabajadorCotizacionCommand request)
         {
             request.IdCotizacion = idCotizacion;
@@ -131,7 +132,7 @@ namespace JKM.API.Controllers
         [HttpDelete(template: "{idCotizacion}/Trabajadores/{idTipo}")]
         [SwaggerOperation("Elimina el tipo de trabajador y su cantidad de una cotizacion en base a su id")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> DeleteTrabajador(int idCotizacion, int idTipo)
         {
             return Ok(await _mediator.Send(new DeleteTrabajadorCotizacionCommand { 
@@ -143,7 +144,7 @@ namespace JKM.API.Controllers
         [HttpGet(template: "{idCotizacion}/Actividades")]
         [SwaggerOperation("Retorna las actividades de una cotizacion")]
         [SwaggerResponse(200, "Retorna las actividades", typeof(IEnumerable<ActividadCotizacionModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetActividadesByCotizacion(int idCotizacion)
         {
             return Ok(await _mediator.Send(new GetActividadesByCotizacionQuery { IdCotizacion = idCotizacion}));
@@ -152,7 +153,7 @@ namespace JKM.API.Controllers
         [HttpPost(template: "{idCotizacion}/Actividades")]
         [SwaggerOperation("Registra una nueva actividad a una cotizacion")]
         [SwaggerResponse(200, "Retorna las actividades", typeof(IEnumerable<ActividadCotizacionModel>))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterActividadCotizacion(int idCotizacion, [FromBody] RegisterActividadCotizacionCommand request)
         {
             request.IdCotizacion = idCotizacion;
@@ -162,7 +163,7 @@ namespace JKM.API.Controllers
         [HttpPut(template: "{idCotizacion}/Actividades/{idActividad}")]
         [SwaggerOperation("Actualiza una actividad de una cotizacion")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateActividadCotizacion(int idCotizacion, int idActividad, [FromBody] UpdateActividadCotizacionCommand request)
         {
             request.IdCotizacion = idCotizacion;
@@ -173,7 +174,7 @@ namespace JKM.API.Controllers
         [HttpDelete(template: "{idCotizacion}/Actividades/{idActividad}")]
         [SwaggerOperation("Elimina una actividad de la cotizacion en base a su idActividad")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> DeleteActividad(int idCotizacion, int idActividad)
         {
             return Ok(await _mediator.Send(new DeleteActividadCotizacionCommand { 

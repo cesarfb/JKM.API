@@ -1,8 +1,5 @@
 ﻿using Dapper;
-using FluentValidation;
-using FluentValidation.Results;
 using JKM.APPLICATION.Aggregates;
-using JKM.PERSISTENCE.Utils;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -23,9 +20,6 @@ namespace JKM.APPLICATION.Queries.Venta.GetCuotasVentaById
 
         public async Task<IEnumerable<VentaCuotasModel>> Handle(GetCuotasVentaByIdQuery request, CancellationToken cancellationToken)
         {
-            ValidationResult validator = new Validator().Validate(request);
-            Handlers.HandlerException(validator);
-
             string sql = $@"SELECT DV.idDetalleVenta, DV.numeroCuota, 
 			                    DV.pagoParcial, DV.idVenta, DV.fechaCuota
 		                    FROM DetalleVenta DV
@@ -50,15 +44,6 @@ namespace JKM.APPLICATION.Queries.Venta.GetCuotasVentaById
                 {
                     throw err;
                 }
-            }
-        }
-
-        private class Validator : AbstractValidator<GetCuotasVentaByIdQuery>
-        {
-            public Validator()
-            {
-                RuleFor(x => x.IdVenta)
-                    .GreaterThan(0).WithMessage("El idVenta debe ser un entero positivo");
             }
         }
     }

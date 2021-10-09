@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using JKM.PERSISTENCE.GlobalErrorHandling;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -29,7 +31,23 @@ namespace JKM.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            Assembly application = AppDomain.CurrentDomain.Load("JKM.APPLICATION");
+            Assembly persistence = AppDomain.CurrentDomain.Load("JKM.PERSISTENCE");
+
+            //Agregamos middleware de validaciones
+            services.AddControllers()
+                .AddFluentValidation(fv =>
+                {
+                    fv.ImplicitlyValidateChildProperties = true;
+                    fv.ImplicitlyValidateRootCollectionElements = true;
+                    fv.DisableDataAnnotationsValidation = true;
+
+                    fv.RegisterValidatorsFromAssembly(application);
+                })
+                //AGREGAMOS LA LIBRERIA PARA PODER PARSEAR LOS ERRORES EN EL BADREQUEST @3.1.2
+                .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
             //DOCUMENTATION
             services.AddSwaggerGen(c =>
@@ -61,36 +79,34 @@ namespace JKM.API
             services.AddScoped<IDbConnection>(x => new SqlConnection(cnn));
 
             //INIT SMTP EMAILS
-            services.AddTransient<SmtpClient>((serviceProvider) =>
+            services.AddTransient((serviceProvider) =>
             {
                 IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
                 return new SmtpClient()
                 {
                     Host = config.GetValue<String>("Smtp:Host"),
                     Port = config.GetValue<int>("Smtp:Port"),
-                    Credentials = new NetworkCredential(config.GetValue<String>("Smtp:Username"), config.GetValue<String>("Smtp:Password")),
+                    Credentials = new NetworkCredential(config.GetValue<String>("Smtp:Username"),
+                                    config.GetValue<String>("Smtp:Password")),
                     EnableSsl = true,
-                    
-                };
-            });
 
-            services.AddTransient<MailMessage>((serviceProvider) =>
+                };
+            }).AddTransient((serviceProvider) =>
             {
                 IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
                 return new MailMessage()
                 {
-                    From = new MailAddress(config.GetValue<string>("Smtp:From"), config.GetValue<string>("Smtp:DisplayName")),
+                    From = new MailAddress(config.GetValue<string>("Smtp:From"),
+                            config.GetValue<string>("Smtp:DisplayName")),
                     IsBodyHtml = true
                 };
             });
 
             //MEDIATR
-            Assembly assembly = AppDomain.CurrentDomain.Load("JKM.APPLICATION");
-            services.AddMediatR(assembly);
+            services.AddMediatR(application);
 
             //INYECCIONES DE REPOSITORY
-            Assembly interfaces = AppDomain.CurrentDomain.Load("JKM.PERSISTENCE");
-            List<Type> repositories = interfaces.GetTypes()
+            List<Type> repositories = persistence.GetTypes()
                 .Where(g => g.Name.IndexOf("Repo") >= 0)
                 .ToList();
 
@@ -103,12 +119,6 @@ namespace JKM.API
                 else
                     services.AddTransient(repo2, repo1);
             }
-
-            //AGREGAMOS LA LIBRERIA PARA PODER PARSEAR LOS ERRORES EN EL BADREQUEST @3.1.2
-            services.AddControllers().AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

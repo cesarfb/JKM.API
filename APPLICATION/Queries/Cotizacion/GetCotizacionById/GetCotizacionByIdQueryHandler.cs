@@ -1,8 +1,5 @@
 ﻿using Dapper;
-using FluentValidation;
-using FluentValidation.Results;
 using JKM.APPLICATION.Aggregates;
-using JKM.PERSISTENCE.Utils;
 using MediatR;
 using System;
 using System.Data;
@@ -22,9 +19,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionById
 
         public async Task<CotizacionModel> Handle(GetCotizacionByIdQuery request, CancellationToken cancellationToken)
         {
-            ValidationResult validator = new Validator().Validate(request);
-            Handlers.HandlerException(validator);
-
             string sql = $@"SELECT C.idCotizacion, C.solicitante, C.descripcion, C.fechaSolicitud,
 			                    C.descripcion, C.email, C.empresa,
 			                    EC.idEstado, EC.descripcion as 'descripcionEstado',
@@ -54,15 +48,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionById
                 {
                     throw new Exception("Ocurrio un error al traer los registros", err);
                 }
-            }
-        }
-
-        private class Validator : AbstractValidator<GetCotizacionByIdQuery>
-        {
-            public Validator()
-            {
-                RuleFor(x => x.IdCotizacion)
-                    .GreaterThan(0).WithMessage("El IdCotizacion debe ser un entero positivo");
             }
         }
     }

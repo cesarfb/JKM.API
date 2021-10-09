@@ -1,22 +1,9 @@
-﻿using System;
-using System.Data;
-using FluentValidation.Results;
+﻿using System.Data;
 
 namespace JKM.PERSISTENCE.Utils
 {
     public static class Handlers
     {
-       public static void HandlerException(ValidationResult result)
-        {
-            if (!result.IsValid)
-            {
-                foreach (ValidationFailure error in result.Errors)
-                {
-                    throw new ArgumentException(error.ErrorMessage);
-                }
-            }
-        }
-        
         public static void ExceptionClose(IDbConnection connection, IDbTransaction transaction = null, string msg = "")
         {
             if (transaction != null) 

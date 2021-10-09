@@ -1,6 +1,4 @@
 ﻿using Dapper;
-using FluentValidation;
-using FluentValidation.Results;
 using JKM.APPLICATION.Aggregates;
 using JKM.PERSISTENCE.Utils;
 using MediatR;
@@ -22,10 +20,7 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado
 
         public async Task<PaginadoResponse<TrabajadorModel>> Handle(GetTrabajadoresPaginadoQuery request, CancellationToken cancellationToken)
         {
-            ValidationResult validator = new Validator().Validate(request);
-            Handlers.HandlerException(validator);
-
-            string sql = $@"SELECT COUNT(1) 
+           string sql = $@"SELECT COUNT(1) 
                             FROM Trabajador T
                             WHERE {request.Estado} = (CASE WHEN {request.Estado} <> 0 THEN
 							    T.idEstado ELSE 0 END)
@@ -72,16 +67,5 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado
                 }
             }
 		}
-
-        private class Validator : AbstractValidator<GetTrabajadoresPaginadoQuery>
-        {
-            public Validator()
-            {
-                RuleFor(x => x.Pages)
-                    .GreaterThan(0).WithMessage("La cantidad de paginas debe ser un entero positivo");
-                RuleFor(x => x.Rows)
-                    .GreaterThan(0).WithMessage("La cantidad de registros debe ser un entero positivo");
-            }
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using JKM.PERSISTENCE.Utils;
+﻿using FluentValidation;
+using JKM.PERSISTENCE.Utils;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -17,5 +18,23 @@ namespace JKM.APPLICATION.Commands.Cotizacion.UpdateCotizacion
         public int IdEstado { get; set; }
         public int IdPrecioCotizacion { get; set; }
         public double PrecioCotizacion { get; set; }
+    }
+
+    public class Validator : AbstractValidator<UpdateCotizacionCommand>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.IdCotizacion)
+                .GreaterThan(0).WithMessage("El IdCotizacion debe ser un entero positivo");
+            RuleFor(x => x.Solicitante)
+                .NotEmpty().WithMessage("El solicitante no puede ser vacío");
+            RuleFor(x => x.Email)
+               .NotEmpty().WithMessage("El email no puede ser vacío")
+               .EmailAddress().WithMessage("Formato erroneo del correo");
+            RuleFor(x => x.Empresa)
+                .NotEmpty().WithMessage("La empresa no puede estar vacía");
+            RuleFor(x => x.IdEstado)
+                .GreaterThan(0).WithMessage("El idEstado debe ser un entero positivo");
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace JKM.API.Controllers
 
         [HttpPost(template: "ContactUs")]
         [SwaggerOperation("Envia un correo de notificacion de una cotizacion")]
-        [SwaggerResponse(422, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetCotizacionPaginado([FromBody] ContactUsNotificationCommand request)
         {
             request.Path = Path.GetFullPath(Path.Combine(_env.ContentRootPath, "Reports/Templates/ContactUsHtml.html"));

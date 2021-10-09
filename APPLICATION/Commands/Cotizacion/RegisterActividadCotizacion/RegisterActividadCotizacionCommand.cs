@@ -1,7 +1,7 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using JKM.PERSISTENCE.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using FluentValidation;
 
 namespace JKM.APPLICATION.Commands.Cotizacion.RegisterActividadCotizacion
 {
@@ -13,5 +13,17 @@ namespace JKM.APPLICATION.Commands.Cotizacion.RegisterActividadCotizacion
         public int Peso { get; set; }
         public int? IdPadre { get; set; }
         public int? IdHermano  { get; set; }
+    }
+    public class Validator : AbstractValidator<RegisterActividadCotizacionCommand>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Descripcion)
+                .NotEmpty().WithMessage("La descripcion no puede ser vacío");
+            RuleFor(x => x.Peso)
+                .GreaterThan(0).WithMessage("El peso debe ser un entero positivo");
+            RuleFor(x => x.IdCotizacion)
+                .GreaterThan(0).WithMessage("El IdCotizacion debe ser un entero positivo");
+        }
     }
 }
