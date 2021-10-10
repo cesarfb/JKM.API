@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using JKM.UTILITY.Jwt;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace JKM.API.Controllers
 {
@@ -11,11 +9,21 @@ namespace JKM.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+
+        public AuthController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         [HttpPost]
         [Route("authenticate")]
-        public async Task<IActionResult> Authenticate(int login)
+        public async Task<IActionResult> Authenticate()
         {
-            return Ok();
+            string token = JwtHandler.createToken();
+            var decode = JwtHandler.decodeToken(token);
+            var validate = JwtHandler.validate(token);
+            return Ok(token);
         }
     }
 }

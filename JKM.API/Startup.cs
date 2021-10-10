@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using JKM.UTILITY.GlobalErrorHandling;
+using JKM.UTILITY.Jwt;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -55,8 +56,10 @@ namespace JKM.API
             //ADD JWT
             IConfigurationSection jwtConfig = Configuration.GetSection("JwtConfig");
             string secret = jwtConfig.GetValue<string>("secret");
-            byte[] encode = Encoding.UTF8.GetBytes(secret);
+            byte[] encode = Encoding.ASCII.GetBytes(secret);
             string expired = jwtConfig.GetValue<string>("expirationInMinutes");
+
+            JwtHandler.setSecret(encode);
 
             services.AddAuthentication(option =>
             {
