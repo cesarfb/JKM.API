@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Commands\Auth\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\JKM.PERSISTANCE\JKM.PERSISTENCE.csproj" />
   </ItemGroup>
 

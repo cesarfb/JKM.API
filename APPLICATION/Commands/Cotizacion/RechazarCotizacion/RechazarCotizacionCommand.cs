@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JKM.PERSISTENCE.Utils;
+using JKM.UTILITY.Utils;
 using MediatR;
 
 namespace JKM.APPLICATION.Commands.Cotizacion.RechazarCotizacion

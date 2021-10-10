@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using System.Threading;
-using JKM.PERSISTENCE.Utils;
 using System.Threading.Tasks;
 using JKM.PERSISTENCE.Repository.Proyecto;
+using JKM.UTILITY.Utils;
 
 namespace JKM.APPLICATION.Commands.Proyecto.RegisterTrabajadorByProyecto
 {

@@ -1,4 +1,4 @@
-﻿using JKM.PERSISTENCE.Utils;
+﻿using JKM.UTILITY.Utils;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Data;
@@ -7,7 +7,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace JKM.PERSISTENCE.GlobalErrorHandling
+namespace JKM.UTILITY.GlobalErrorHandling
 {
     public class ErrorHandlerMiddleware
     {

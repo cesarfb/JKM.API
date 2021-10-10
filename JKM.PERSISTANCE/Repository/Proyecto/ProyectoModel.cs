@@ -1,7 +1,5 @@
-﻿using JKM.PERSISTENCE.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace JKM.PERSISTENCE.Repository.Proyecto
 {

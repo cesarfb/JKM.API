@@ -1,4 +1,4 @@
-﻿using JKM.PERSISTENCE.Utils;
+﻿using JKM.UTILITY.Utils;
 using System.Threading.Tasks;
 
 namespace JKM.PERSISTENCE.Repository.Proyecto

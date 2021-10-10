@@ -1,10 +1,8 @@
 ﻿using MediatR;
 using System.Threading;
-using JKM.PERSISTENCE.Utils;
 using System.Threading.Tasks;
 using JKM.PERSISTENCE.Repository.Cotizacion;
-using FluentValidation;
-using FluentValidation.Results;
+using JKM.UTILITY.Utils;
 
 namespace JKM.APPLICATION.Commands.Cotizacion.DeleteActividadCotizacion
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JKM.PERSISTENCE.Utils
+namespace JKM.UTILITY.Utils
 {
     public class ResponseModel
     {

@@ -1,7 +1,4 @@
-﻿using JKM.PERSISTENCE.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using JKM.UTILITY.Utils;
 using System.Threading.Tasks;
 
 namespace JKM.PERSISTENCE.Repository.Cotizacion

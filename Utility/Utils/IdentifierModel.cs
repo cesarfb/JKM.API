@@ -1,4 +1,4 @@
-﻿namespace JKM.PERSISTENCE.Utils
+﻿namespace JKM.UTILITY.Utils
 {
     public class Identifier
     {

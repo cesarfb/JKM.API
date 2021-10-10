@@ -1,7 +1,7 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 
-namespace JKM.PERSISTENCE.Utils
+namespace JKM.UTILITY.Utils
 {
     public class PaginadoModel
     {

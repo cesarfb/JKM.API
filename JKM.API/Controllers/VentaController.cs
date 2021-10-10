@@ -8,7 +8,7 @@ using JKM.APPLICATION.Queries.Venta.GetTipoVenta;
 using JKM.APPLICATION.Queries.Venta.GetVentaById;
 using JKM.APPLICATION.Queries.Venta.GetVentaPaginado;
 using Swashbuckle.AspNetCore.Annotations;
-using JKM.PERSISTENCE.Utils;
+using JKM.UTILITY.Utils;
 using System.Collections.Generic;
 using JKM.APPLICATION.Aggregates;
 

@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using JKM.PERSISTENCE.Utils;
 using FluentValidation;
+using JKM.UTILITY.Utils;
 
 namespace JKM.APPLICATION.Commands.Proyecto.DeleteTrabajadorByProyecto
 {

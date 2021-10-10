@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using JKM.PERSISTENCE.Utils;
 using JKM.PERSISTENCE.Repository.Cotizacion;
+using JKM.UTILITY.Utils;
 
 namespace JKM.APPLICATION.Commands.Cotizacion.RegisterTrabajadorCotizacion
 {

@@ -15,11 +15,11 @@ using JKM.APPLICATION.Commands.Cotizacion.UpdateTrabajadorCotizacion;
 using JKM.APPLICATION.Commands.Cotizacion.DeleteTrabajadorCotizacion;
 using JKM.APPLICATION.Commands.Cotizacion.DeleteActividadCotizacion;
 using JKM.APPLICATION.Commands.Cotizacion.UpdateActividadCotizacion;
-using JKM.PERSISTENCE.Utils;
 using JKM.APPLICATION.Aggregates;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
+using JKM.UTILITY.Utils;
 
 namespace JKM.API.Controllers
 {

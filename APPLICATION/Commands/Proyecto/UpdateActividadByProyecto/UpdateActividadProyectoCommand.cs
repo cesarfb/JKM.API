@@ -1,8 +1,8 @@
 ﻿using System;
 using MediatR;
-using JKM.PERSISTENCE.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 using FluentValidation;
+using JKM.UTILITY.Utils;
 
 namespace JKM.APPLICATION.Commands.Proyecto.UpdateActividadByProyecto
 {

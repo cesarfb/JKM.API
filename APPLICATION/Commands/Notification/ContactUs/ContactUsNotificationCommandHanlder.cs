@@ -1,5 +1,6 @@
-﻿using JKM.PERSISTENCE.Repository.Notification;
+﻿using JKM.APPLICATION.Utils;
 using MediatR;
+using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,18 +8,30 @@ namespace JKM.APPLICATION.Commands.Notification.ContactUs
 {
     public class ContactUsNotificationCommandHanlder : INotificationHandler<ContactUsNotificationCommand>
     {
-        private readonly INotificationRepository _notificationRepository;
+        private readonly SmtpClient _smtp;
+        private readonly MailMessage _mail;
 
-        public ContactUsNotificationCommandHanlder(INotificationRepository notificationRepository)
+        public ContactUsNotificationCommandHanlder(SmtpClient smtp, MailMessage mail)
         {
-            _notificationRepository = notificationRepository;
+            _smtp = smtp;
+            _mail = mail;
         }
 
         public async Task Handle(ContactUsNotificationCommand request, CancellationToken cancellationToken)
         {
-            NotificationModel model = new NotificationModel();
-            model.ContactUs(request.EmailAddress, request.Empresa, request.Nombre, request.Apellido, request.Telefono, request.Mensaje, request.Path, request.Logo);
-            await _notificationRepository.ContactUs(model);
+            using (MailMessage mail = _mail)
+            {
+                mail.To.Add(request.EmailAddress);
+                mail.Subject = "Solicitud de Servicio";
+                mail.Body = Templates.ContactUsHtml(request);
+                //byte[] pdf = Templates.ContactUsPdf(notification);
+                //mail.Attachments.Add(new Attachment(pdf));
+
+                using (SmtpClient smtp = _smtp)
+                {
+                    await smtp.SendMailAsync(mail);
+                }
+            }
         }
     }
 }

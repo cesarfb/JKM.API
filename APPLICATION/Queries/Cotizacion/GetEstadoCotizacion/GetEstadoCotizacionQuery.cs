@@ -1,4 +1,4 @@
-﻿using JKM.PERSISTENCE.Utils;
+﻿using JKM.UTILITY.Utils;
 using MediatR;
 using System.Collections.Generic;
 

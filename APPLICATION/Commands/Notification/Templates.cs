@@ -1,13 +1,13 @@
-﻿using JKM.PERSISTENCE.Repository.Notification;
+﻿using JKM.APPLICATION.Commands.Notification.ContactUs;
 using System;
 using System.IO;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
+//using TheArtOfDev.HtmlRenderer.PdfSharp;
 
-namespace JKM.PERSISTENCE.Utils
+namespace JKM.APPLICATION.Utils
 {
     public static class Templates
     {
-        public static string ContactUsHtml(NotificationModel model)
+        public static string ContactUsHtml(ContactUsNotificationCommand model)
         {
             string emailMessage = ReadPhysicalFile(model.Path)
             .Replace("{LOGO}", model.Logo)
@@ -21,14 +21,14 @@ namespace JKM.PERSISTENCE.Utils
             return emailMessage;
         }
 
-        public static Byte[] ContactUsPdf(NotificationModel model)
+        public static Byte[] ContactUsPdf(ContactUsNotificationCommand model)
         {
             Byte[] res;
             string html = ContactUsHtml(model);
             using (MemoryStream ms = new MemoryStream())
             {
-                var pdf = PdfGenerator.GeneratePdf(html, PdfSharp.PageSize.A4);
-                pdf.Save(ms);
+                //var pdf = PdfGenerator.GeneratePdf(html, PdfSharp.PageSize.A4);
+                //pdf.Save(ms);
                 res = ms.ToArray();
             }
             return res;

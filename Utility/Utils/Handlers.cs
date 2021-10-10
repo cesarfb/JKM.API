@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Transactions;
 
-namespace JKM.PERSISTENCE.Utils
+namespace JKM.UTILITY.Utils
 {
     public static class Handlers
     {

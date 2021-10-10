@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using JKM.APPLICATION.Aggregates;
-using JKM.PERSISTENCE.Utils;
+using JKM.UTILITY.Utils;
 using MediatR;
 using System;
 using System.Data;

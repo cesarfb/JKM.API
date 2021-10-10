@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using JKM.APPLICATION.Commands.Notification.ContactUs;
-using JKM.PERSISTENCE.Utils;
+using JKM.UTILITY.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +22,10 @@ namespace JKM.API.Controllers
             _env = env;
         }
 
-        [HttpPost(template: "ContactUs")]
+        [HttpPost(template: "Contact")]
         [SwaggerOperation("Envia un correo de notificacion de una cotizacion")]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> GetCotizacionPaginado([FromBody] ContactUsNotificationCommand request)
+        public async Task<IActionResult> ContactUs([FromBody] ContactUsNotificationCommand request)
         {
             request.Path = Path.GetFullPath(Path.Combine(_env.ContentRootPath, "Reports/Templates/ContactUsHtml.html"));
             request.Logo = Path.GetFullPath(Path.Combine(_env.ContentRootPath, "Reports/Assets/JKMLOGO.png"));

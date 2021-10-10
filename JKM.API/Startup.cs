@@ -1,12 +1,14 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using JKM.PERSISTENCE.GlobalErrorHandling;
+using JKM.UTILITY.GlobalErrorHandling;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
+using System.Text;
 
 namespace JKM.API
 {
@@ -34,7 +37,7 @@ namespace JKM.API
             Assembly application = AppDomain.CurrentDomain.Load("JKM.APPLICATION");
             Assembly persistence = AppDomain.CurrentDomain.Load("JKM.PERSISTENCE");
 
-            //Agregamos middleware de validaciones
+            //MIDDLEWARE FLUENT VALIDATION
             services.AddControllers()
                 .AddFluentValidation(fv =>
                 {
@@ -48,6 +51,29 @@ namespace JKM.API
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
+
+            //ADD JWT
+            IConfigurationSection jwtConfig = Configuration.GetSection("JwtConfig");
+            string secret = jwtConfig.GetValue<string>("secret");
+            byte[] encode = Encoding.UTF8.GetBytes(secret);
+            string expired = jwtConfig.GetValue<string>("expirationInMinutes");
+
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(encode)
+                };
+            }); ;
 
             //DOCUMENTATION
             services.AddSwaggerGen(c =>
@@ -75,32 +101,32 @@ namespace JKM.API
             });
 
             //INIT DATABASE CONN
-            string cnn = Configuration.GetValue<string>("ConnectionStrings:DB_JKM");
+            string cnn = Configuration.GetSection("ConnectionStrings").GetValue<string>("DB_JKM");
             services.AddScoped<IDbConnection>(x => new SqlConnection(cnn));
 
             //INIT SMTP EMAILS
-            services.AddTransient((serviceProvider) =>
-            {
-                IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
-                return new SmtpClient()
-                {
-                    Host = config.GetValue<String>("Smtp:Host"),
-                    Port = config.GetValue<int>("Smtp:Port"),
-                    Credentials = new NetworkCredential(config.GetValue<String>("Smtp:Username"),
-                                    config.GetValue<String>("Smtp:Password")),
-                    EnableSsl = true,
+            IConfigurationSection smtp = Configuration.GetSection("Smtp");
+            string host = smtp.GetValue<string>("Host");
+            int port = smtp.GetValue<int>("Port");
+            string user = smtp.GetValue<string>("Username");
+            string pass = smtp.GetValue<string>("Password");
+            string from = smtp.GetValue<string>("From");
+            string displayName = smtp.GetValue<string>("DisplayName");
 
-                };
-            }).AddTransient((serviceProvider) =>
+            services.AddTransient<SmtpClient>((serviceProvider) => new SmtpClient()
             {
-                IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
-                return new MailMessage()
-                {
-                    From = new MailAddress(config.GetValue<string>("Smtp:From"),
-                            config.GetValue<string>("Smtp:DisplayName")),
-                    IsBodyHtml = true
-                };
-            });
+                Host = host,
+                Port = port,
+                Credentials = new NetworkCredential(user, pass),
+                EnableSsl = true,
+
+            }
+            ).AddTransient((serviceProvider) => new MailMessage()
+            {
+                From = new MailAddress(from, displayName),
+                IsBodyHtml = true
+            }
+            );
 
             //MEDIATR
             services.AddMediatR(application);
@@ -152,8 +178,11 @@ namespace JKM.API
             app.UseCors("AllowAll");
             ///////
 
+            //ENABLE FOR TOKEN
             app.UseAuthorization();
-
+            app.UseAuthentication();
+            //////////////////
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

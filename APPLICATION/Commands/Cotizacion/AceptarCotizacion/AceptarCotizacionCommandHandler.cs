@@ -1,7 +1,5 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
-using JKM.PERSISTENCE.Repository.Cotizacion;
-using JKM.PERSISTENCE.Utils;
+﻿using JKM.PERSISTENCE.Repository.Cotizacion;
+using JKM.UTILITY.Utils;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;

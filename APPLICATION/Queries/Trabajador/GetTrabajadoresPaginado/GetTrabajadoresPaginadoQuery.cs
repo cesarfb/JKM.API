@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using JKM.APPLICATION.Aggregates;
-using JKM.PERSISTENCE.Utils;
+using JKM.UTILITY.Utils;
 using MediatR;
 
 namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado

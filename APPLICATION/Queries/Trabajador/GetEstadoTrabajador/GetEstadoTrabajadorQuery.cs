@@ -1,8 +1,6 @@
-﻿using JKM.PERSISTENCE.Utils;
+﻿using JKM.UTILITY.Utils;
 using MediatR;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace JKM.APPLICATION.Queries.Trabajador.GetEstadoTrabajador
 {
