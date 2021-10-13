@@ -7,6 +7,7 @@ namespace JKM.UTILITY.Utils
     public class ResponseModel
     {
         public string Message { get; set; }
+        public dynamic Data { get; set; }
     }
 
     public class ErrorModel

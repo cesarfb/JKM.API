@@ -6,9 +6,11 @@ using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JKM.API.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class NotificationController : ControllerBase

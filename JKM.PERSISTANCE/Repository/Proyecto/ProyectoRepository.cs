@@ -19,7 +19,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 
         public async Task<ResponseModel> RegisterProyecto(ProyectoModel proyectoModel)
         {
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -55,7 +55,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 					  FROM EstadoProyecto 
 					  WHERE idEstado= {proyectoModel.IdEstado};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -124,7 +124,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 					  WHERE idProyecto = {idProyecto} 
 					  	AND idTrabajador = {idTrabajador};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -184,7 +184,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 							FROM Trabajador 
 							WHERE idTrabajador = {idTrabajador};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -238,7 +238,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 					  FROM ActividadProyecto
 					  WHERE idActividad = {actividadModel.IdActividad};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try

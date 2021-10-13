@@ -20,9 +20,11 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
 using JKM.UTILITY.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JKM.API.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class CotizacionController : ControllerBase

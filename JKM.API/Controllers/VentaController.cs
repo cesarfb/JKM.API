@@ -11,9 +11,11 @@ using Swashbuckle.AspNetCore.Annotations;
 using JKM.UTILITY.Utils;
 using System.Collections.Generic;
 using JKM.APPLICATION.Aggregates;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JKM.API.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class VentaController : ControllerBase

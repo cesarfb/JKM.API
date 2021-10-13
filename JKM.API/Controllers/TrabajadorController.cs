@@ -11,9 +11,11 @@ using JKM.UTILITY.Utils;
 using JKM.APPLICATION.Aggregates;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JKM.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TrabajadorController : ControllerBase

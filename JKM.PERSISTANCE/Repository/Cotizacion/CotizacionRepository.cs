@@ -24,7 +24,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						    WHERE idCotizacion = {idCotizacion} 
 						    AND idEstado = 1;";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -61,7 +61,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						    WHERE idCotizacion = { idCotizacion }
 							    AND idEstado = 1;";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -93,7 +93,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 
         public async Task<ResponseModel> RegisterCotizacion(CotizacionModel cotizacionModel)
         {
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -128,7 +128,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 					  FROM PrecioCotizacion 
 					  WHERE idPrecioCotizacion = {cotizacionModel.IdPrecioCotizacion};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -203,7 +203,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                       FROM TipoTrabajador
                       WHERE idTipoTrabajador = {trabajadorModel.IdTipoTrabajador};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -252,7 +252,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 					  FROM TipoTrabajador 
 				      WHERE idTipoTrabajador = {trabajadorModel.IdTipoTrabajador};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -297,7 +297,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						    FROM TipoTrabajador 
 						    WHERE idTipoTrabajador = {idTipo};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -339,7 +339,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						AND idPadre = {actividadModel.IdPadre}
 						AND idCotizacion = {actividadModel.IdCotizacion};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -386,7 +386,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 					  FROM ActividadProyecto
 					  WHERE idCotizacion = {actividadModel.IdCotizacion};";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
@@ -453,7 +453,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 				      WHERE idActividad = {idActividad};
                         AND idCotizacion = {idCotizacion}";
 
-            using (TransactionScope trans = new TransactionScope())
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
                 try
