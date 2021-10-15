@@ -16,7 +16,7 @@ using System;
 namespace JKM.API.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {

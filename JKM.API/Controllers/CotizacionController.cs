@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace JKM.API.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CotizacionController : ControllerBase
     {

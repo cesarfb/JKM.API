@@ -169,22 +169,22 @@ namespace JKM.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //HANDLE EXCEPTIONS
+            //SWAGGER
+            app.UseSwagger(c =>
+            {
+                c.SerializeAsV2 = true;
+            });
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
+
             if (env.IsDevelopment())
             {
+                //HANDLE EXCEPTIONS
                 app.UseDeveloperExceptionPage();
-                //SWAGGER
-                app.UseSwagger(c =>
-                {
-                    c.SerializeAsV2 = true;
-                });
-
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                    c.RoutePrefix = string.Empty;
-                });
-                /////////
             }
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
@@ -201,7 +201,7 @@ namespace JKM.API
             app.UseAuthentication();
             app.UseAuthorization();
             //////////////////
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
