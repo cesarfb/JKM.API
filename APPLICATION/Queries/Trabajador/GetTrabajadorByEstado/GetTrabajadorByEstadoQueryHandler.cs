@@ -20,13 +20,12 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadorByEstado
 
         public async Task<IEnumerable<TrabajadorModel>> Handle(GetTrabajadorByEstadoQuery request, CancellationToken cancellationToken)
         {
-            string sql = $@"SELECT T.idTrabajador, DU.nombre, DU.apellido, DU.fechaNacimiento, 
-								TT.idTipoTrabajador, TT.descripcion 'DescripcionTipo', TT.precioReferencial,
-								ET.idEstado, ET.descripcion 'DescripcionEstado'
-							FROM Trabajador T
-							INNER JOIN DetalleUsuario DU ON (DU.idDetalleUsuario = T.idDetalleUsuario)
-							INNER JOIN TipoTrabajador TT ON (TT.idTipoTrabajador = T.idTipoTrabajador)
-							INNER JOIN EstadoTrabajador ET ON (ET.idEstado = T.idEstado)
+            string sql = $@"SELECT T.idTrabajador, T.nombre, T.apellidoPaterno, T.apellidoMaterno, T.fechaNacimiento,
+							       ET.idEstado, ET.descripcion 'descripcionEstado',
+							       TT.idTipoTrabajador, TT.descripcion 'descripcionTipo', TT.precioReferencial
+					        FROM Trabajador T 
+					        INNER JOIN EstadoTrabajador ET ON ET.idEstado = T.idEstado
+					        INNER JOIN TipoTrabajador TT ON TT.idTipoTrabajador = T.idTipoTrabajador
 							WHERE T.idEstado = {request.IdEstado}";
 
             using (IDbConnection connection = _conexion)

@@ -12,6 +12,8 @@ using JKM.APPLICATION.Aggregates;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using JKM.APPLICATION.Commands.Trabajador.RegisterTrabajador;
+using JKM.APPLICATION.Commands.Trabajador.UpdateTrabajador;
 
 namespace JKM.API.Controllers
 {
@@ -45,6 +47,39 @@ namespace JKM.API.Controllers
             }
         }
 
+        [HttpPost]
+        [SwaggerOperation("Registra un nuevo trabajador")]
+        [SwaggerResponse(200, "Registra un trabajador", typeof(ResponseModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> RegisterTrabajador([FromBody] RegisterTrabajadorCommand request)
+        {
+            try
+            {
+                return Ok(await _mediator.Send(request));
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
+        [HttpPut(template: "{idTrabajador}")]
+        [SwaggerOperation("Actualiza un trabajador en basea su id")]
+        [SwaggerResponse(200, "Actualiza un trabajador", typeof(ResponseModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> UpdateTrabajador(int idTrabajador, [FromBody] UpdateTrabajadorCommand request)
+        {
+            try
+            {
+                request.IdTrabajador = idTrabajador;
+                return Ok(await _mediator.Send(request));
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
         [HttpGet(template: "{idTrabajador}")]
         [SwaggerOperation("Retorna un trabajador en base a su Id")]
         [SwaggerResponse(200, "Retorna el trabajador", typeof(TrabajadorModel))]
@@ -61,7 +96,7 @@ namespace JKM.API.Controllers
             }
         }
 
-        [HttpGet(template: "{idEstado}")]
+        [HttpGet(template: "Estado/{idEstado}")]
         [SwaggerOperation("Retorna los trabajadores en base al estado")]
         [SwaggerResponse(200, "Retorna los trabajadores", typeof(IEnumerable<TrabajadorModel>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
@@ -97,7 +132,7 @@ namespace JKM.API.Controllers
         
         [HttpGet(template: "Tipo")]
         [SwaggerOperation("Retorna los tipos de trabajadores")]
-        [SwaggerResponse(200, "Retorna los tipos", typeof(IEnumerable<Identifier>))]
+        [SwaggerResponse(200, "Retorna los tipos", typeof(IEnumerable<TipoTrabajador>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTipoTrabajador()
         {

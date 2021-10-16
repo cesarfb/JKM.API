@@ -22,25 +22,23 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado
         {
            string sql = $@"SELECT COUNT(1) 
                             FROM Trabajador T
-                            WHERE {request.Estado} = (CASE WHEN {request.Estado} <> 0 THEN
+                            WHERE @idEstado = (CASE WHEN @idEstado <> 0 THEN
 							    T.idEstado ELSE 0 END)
-							    AND {request.Tipo}  = (CASE WHEN {request.Tipo} <> 0 THEN
+							    AND @idTipo  = (CASE WHEN @idTipo <> 0 THEN
 								T.idTipoTrabajador ELSE 0 END);";
 
-			sql += $@"SELECT T.idTrabajador, DU.nombre, DU.apellido, DU.fechaNacimiento,
-								T.idEstado, E.descripcion 'descripcionEstado',
+			sql += $@"SELECT T.idTrabajador, T.nombre, T.apellidoPaterno, T.apellidoMaterno, T.fechaNacimiento,
+								ET.idEstado, ET.descripcion 'descripcionEstado',
 								TT.idTipoTrabajador, TT.descripcion 'descripcionTipo', TT.precioReferencial
 					  FROM Trabajador T 
-					  INNER JOIN DetalleUsuario DU ON DU.idDetalleUsuario = T.idDetalleUsuario
-					  INNER JOIN TipoDetalle TD ON TD.idTipoDetalle = DU.idTipoDetalle
-					  INNER JOIN EstadoTrabajador E ON E.idEstado = T.idEstado
+					  INNER JOIN EstadoTrabajador ET ON ET.idEstado = T.idEstado
 					  INNER JOIN TipoTrabajador TT ON TT.idTipoTrabajador = T.idTipoTrabajador
-					  WHERE {request.Estado} = (CASE WHEN {request.Estado} <> 0 
+					  WHERE @idEstado = (CASE WHEN @idEstado <> 0 
                                                 THEN T.idEstado ELSE 0 END)
-							AND {request.Tipo}  = (CASE WHEN {request.Tipo} <> 0 THEN
+							AND @idTipo  = (CASE WHEN @idTipo <> 0 THEN
 												   T.idTipoTrabajador ELSE 0 END)
 					  ORDER BY T.idTrabajador DESC
-					  OFFSET (({request.Pages} - 1) * {request.Rows}) ROWS FETCH NEXT {request.Rows} ROWS ONLY;";
+					  OFFSET CAST((@Rows * (@Pages - 1)) AS INT) ROWS FETCH NEXT CAST(@Rows AS INT) ROWS ONLY;";
 
 			using (IDbConnection connection = _conexion)
 			{
@@ -49,7 +47,8 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado
                     PaginadoResponse<TrabajadorModel> newPaginado = new PaginadoResponse<TrabajadorModel>();
 
                     connection.Open();
-                    using (var multi = await connection.QueryMultipleAsync(sql))
+
+                    using (var multi = await connection.QueryMultipleAsync(sql, request))
                     {
                         newPaginado.TotalRows = multi.ReadFirst<int>();
                         newPaginado.Data = multi.Read<TrabajadorModel>().AsList();

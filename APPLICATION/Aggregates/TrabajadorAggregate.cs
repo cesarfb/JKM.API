@@ -1,4 +1,5 @@
 ﻿using JKM.UTILITY.Utils;
+using Newtonsoft.Json;
 using System;
 
 namespace JKM.APPLICATION.Aggregates
@@ -6,6 +7,8 @@ namespace JKM.APPLICATION.Aggregates
     public class TipoTrabajador
     {
         public int id { get; set; }
+
+        [JsonProperty("precio_referencial")]
         public decimal precioReferencial { get; set; }
         public string descripcion { get; set; }
     }
@@ -14,8 +17,12 @@ namespace JKM.APPLICATION.Aggregates
     {
         public int IdTrabajador { get; set; }
         public string Nombre { get; set; }
-        public string Apellido { get; set; }
+        [JsonProperty("apellido_paterno")]
+        public string ApellidoPaterno { get; set; }
+        [JsonProperty("apellido_materno")]
+        public string ApellidoMaterno { get; set; }
         private DateTime? FechaNacimiento { get; set; }
+        [JsonProperty("fecha_nacimiento")]
         public string FechaNacimientoString
         {
             get
