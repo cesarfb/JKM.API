@@ -80,6 +80,7 @@ namespace JKM.API.Controllers
             }
         }
 
+
         [HttpGet(template: "{idTrabajador}")]
         [SwaggerOperation("Retorna un trabajador en base a su Id")]
         [SwaggerResponse(200, "Retorna el trabajador", typeof(TrabajadorModel))]
