@@ -22,8 +22,8 @@ namespace JKM.APPLICATION.Aggregates
     }
     public class VentaModel
     {
-        public int idVenta { get; set; }
-        public double precio { get; set; }
+        public int IdVenta { get; set; }
+        public double Precio { get; set; }
 
         private DateTime? FechaRegistro { get; set; }
         [JsonProperty("fechaRegistro")]
@@ -35,15 +35,15 @@ namespace JKM.APPLICATION.Aggregates
             }
         }
 
-        private int idTipo { get; set; }
-        private string tipoDescripcion { get; set; }
+        private int IdTipo { get; set; }
+        private string TipoDescripcion { get; set; }
 
-        private int idEstado { get; set; }
-        private string estadoDescripcion { get; set; }
+        private int IdEstado { get; set; }
+        private string EstadoDescripcion { get; set; }
 
 
-        public string razonSocial { get; set; }
-        public string ruc { get; set; }
+        public string RazonSocial { get; set; }
+        public string Ruc { get; set; }
 
      
         public Identifier Estado
@@ -52,8 +52,8 @@ namespace JKM.APPLICATION.Aggregates
             {
                 return new Identifier
                 {
-                    descripcion = estadoDescripcion,
-                    id = idEstado
+                    descripcion = EstadoDescripcion,
+                    id = IdEstado
                 };
             }
         }
@@ -63,8 +63,8 @@ namespace JKM.APPLICATION.Aggregates
             {
                 return new Identifier
                 {
-                    descripcion = tipoDescripcion,
-                    id = idTipo
+                    descripcion = TipoDescripcion,
+                    id = IdTipo
                 };
             }
         }

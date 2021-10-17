@@ -26,8 +26,7 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetProyectoPaginado
 						P.fechaFin, P.descripcion, EP.idEstado, EP.descripcion 'DescripcionEstado'
 					  FROM Proyecto P
 					  INNER JOIN EstadoProyecto EP ON (EP.idEstado = P.idEstado)
-					  ORDER BY P.idProyecto DESC
-					  OFFSET (({request.Pages}-1) * {request.Rows}) ROWS FETCH NEXT {request.Rows} ROWS ONLY;";
+					  ORDER BY P.idProyecto DESC;";
 
             using (IDbConnection connection = _conexion)
             {
@@ -40,7 +39,6 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetProyectoPaginado
                     {
                         newPaginado.TotalRows = multi.ReadFirst<int>();
                         newPaginado.Data = multi.Read<ProyectoModel>().AsList();
-                        newPaginado.TotalPages = Math.Ceiling(newPaginado.TotalRows / request.Rows);
                     }
                     connection.Close();
                     

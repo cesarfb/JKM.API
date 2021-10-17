@@ -47,8 +47,7 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
 						                                   AND PC.fecha = (SELECT MAX(fecha) 
 										        		                   FROM PrecioCotizacion 
 																           WHERE idCotizacion = C.idCotizacion))
-	                    ORDER BY C.fechaSolicitud DESC
-	                    OFFSET (({request.Pages} - 1) * {request.Rows}) ROWS FETCH NEXT {request.Rows} ROWS ONLY;";
+	                    ORDER BY C.fechaSolicitud DESC;";
 
             using (IDbConnection connection = _conexion)
             {
@@ -61,7 +60,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
                     {
                         newPaginado.TotalRows = multi.ReadFirst<int>();
                         newPaginado.Data = multi.Read<CotizacionModel>().AsList();
-                        newPaginado.TotalPages = Math.Ceiling(newPaginado.TotalRows / request.Rows);
                     }
                     connection.Close();
 

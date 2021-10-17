@@ -50,7 +50,7 @@ namespace JKM.UTILITY.GlobalErrorHandling
                         response.StatusCode = (int)HttpStatusCode.BadGateway;
                         error.Status = (int)HttpStatusCode.BadGateway;
                         error.Exception = "Query Exception";
-                        error.Data = e.Message;
+                        error.Message = e.Message;
                         break;
                     default: //500 - unhandled error
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;

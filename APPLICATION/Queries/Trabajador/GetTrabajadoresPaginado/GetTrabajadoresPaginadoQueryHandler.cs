@@ -27,7 +27,7 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado
 							    AND @idTipo  = (CASE WHEN @idTipo <> 0 THEN
 								T.idTipoTrabajador ELSE 0 END);";
 
-			sql += $@"SELECT T.idTrabajador, T.nombre, T.apellidoPaterno, T.apellidoMaterno, T.fechaNacimiento,
+            sql += $@"SELECT T.idTrabajador, T.nombre, T.apellidoPaterno, T.apellidoMaterno, T.fechaNacimiento,
 								ET.idEstado, ET.descripcion 'descripcionEstado',
 								TT.idTipoTrabajador, TT.descripcion 'descripcionTipo', TT.precioReferencial
 					  FROM Trabajador T 
@@ -37,8 +37,7 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado
                                                 THEN T.idEstado ELSE 0 END)
 							AND @idTipo  = (CASE WHEN @idTipo <> 0 THEN
 												   T.idTipoTrabajador ELSE 0 END)
-					  ORDER BY T.idTrabajador DESC
-					  OFFSET CAST((@Rows * (@Pages - 1)) AS INT) ROWS FETCH NEXT CAST(@Rows AS INT) ROWS ONLY;";
+					  ORDER BY T.idTrabajador DESC;";
 
 			using (IDbConnection connection = _conexion)
 			{
@@ -52,7 +51,6 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado
                     {
                         newPaginado.TotalRows = multi.ReadFirst<int>();
                         newPaginado.Data = multi.Read<TrabajadorModel>().AsList();
-                        newPaginado.TotalPages = Math.Ceiling(newPaginado.TotalRows / request.Rows);
                     }
                     connection.Close();
 
