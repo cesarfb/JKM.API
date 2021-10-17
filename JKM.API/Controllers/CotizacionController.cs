@@ -41,9 +41,9 @@ namespace JKM.API.Controllers
         [SwaggerResponse(200, "Retorna las cotizaciones", typeof(PaginadoResponse<CotizacionModel>))]
         [SwaggerResponse(204, "No se encontraron cotizaciones")]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> GetCotizacionPaginado([FromQuery] GetCotizacionPaginadoQuery request)
+        public async Task<IActionResult> GetCotizacionPaginado()
         {
-            return Ok(await _mediator.Send(request));
+            return Ok(await _mediator.Send(new GetCotizacionPaginadoQuery()));
         }
 
         [HttpGet(template: "{idCotizacion}")]

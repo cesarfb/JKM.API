@@ -30,9 +30,9 @@ namespace JKM.API.Controllers
         [SwaggerOperation("Retorna las ventas por pagina")]
         [SwaggerResponse(200, "Retorna las ventas", typeof(IEnumerable<VentaModel>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> GetVentaPaginado([FromQuery] GetVentaPaginadoQuery request)
+        public async Task<IActionResult> GetVentaPaginado()
         {
-            return Ok(await _mediator.Send(request));
+            return Ok(await _mediator.Send(new GetVentaPaginadoQuery()));
         }
 
         [HttpGet(template: "{idVenta}")]

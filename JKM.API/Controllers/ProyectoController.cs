@@ -35,9 +35,9 @@ namespace JKM.API.Controllers
         [SwaggerOperation("Retorna los proyectos por página")]
         [SwaggerResponse(200, "Retorna los proyectos", typeof(PaginadoResponse<ProyectoModel>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> GetProyectoPaginado([FromQuery] GetProyectoPaginadoQuery request)
+        public async Task<IActionResult> GetProyectoPaginado()
         {
-            return Ok(await _mediator.Send(request));
+            return Ok(await _mediator.Send(new GetProyectoPaginadoQuery()));
         }
 
         [HttpGet(template: "{idProyecto}")]

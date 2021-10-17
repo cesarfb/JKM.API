@@ -33,9 +33,9 @@ namespace JKM.API.Controllers
         [SwaggerOperation("Trae los trabajadores por página")]
         [SwaggerResponse(200, "Retorna los trabajadores", typeof(PaginadoResponse<TrabajadorModel>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> GetTrabajadorPaginado([FromQuery] GetTrabajadoresPaginadoQuery request)
+        public async Task<IActionResult> GetTrabajadorPaginado()
         {
-            var response = await _mediator.Send(request);
+            var response = await _mediator.Send(new GetTrabajadoresPaginadoQuery());
             if (response == null) return NotFound(new { msg = "Error al traer los resultados" });
             return Ok(response);
         }

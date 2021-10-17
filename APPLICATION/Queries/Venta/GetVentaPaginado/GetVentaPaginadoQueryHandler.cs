@@ -28,7 +28,7 @@ namespace JKM.APPLICATION.Queries.Venta.GetVentaPaginado
                         Cli.razonSocial, Cli.ruc
                     FROM Venta V
                     	INNER JOIN EstadoVenta	EV	ON (EV.idEstado		= V.idEstado)
-                    	INNER JOIN TipoVenta	TV	ON (C.idTipo		= V.idTipo)
+                    	INNER JOIN TipoVenta	TV	ON (TV.idTipo		= V.idTipo)
                     	INNER JOIN Cotizacion	Cot	ON (Cot.idCotizacion	= V.idCotizacion)
                     	INNER JOIN Cliente		Cli   ON (Cli.idCliente		= Cot.idCliente)
                     ORDER BY V.idVenta DESC";
