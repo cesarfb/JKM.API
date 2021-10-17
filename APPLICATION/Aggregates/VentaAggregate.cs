@@ -1,4 +1,5 @@
 ﻿using JKM.UTILITY.Utils;
+using Newtonsoft.Json;
 using System;
 
 namespace JKM.APPLICATION.Aggregates
@@ -10,6 +11,7 @@ namespace JKM.APPLICATION.Aggregates
         public int NumeroCuota { get; set; }
         public double PagoParcial { get; set; }
         public DateTime? FechaCuota { get; set; }
+        [JsonProperty("fechaCuota")]
         public string FechaCuotaString
         {
             get
@@ -26,6 +28,7 @@ namespace JKM.APPLICATION.Aggregates
         public string RazonSocial { get; set; }
 
         private DateTime? FechaRegistro { get; set; }
+        [JsonProperty("fechaRegistro")]
         public string FechaRegistroString
         {
             get

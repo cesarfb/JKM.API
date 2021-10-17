@@ -8,7 +8,6 @@ namespace JKM.APPLICATION.Aggregates
     {
         public int id { get; set; }
 
-        [JsonProperty("precio_referencial")]
         public decimal precioReferencial { get; set; }
         public string descripcion { get; set; }
     }
@@ -17,12 +16,10 @@ namespace JKM.APPLICATION.Aggregates
     {
         public int IdTrabajador { get; set; }
         public string Nombre { get; set; }
-        [JsonProperty("apellido_paterno")]
         public string ApellidoPaterno { get; set; }
-        [JsonProperty("apellido_materno")]
         public string ApellidoMaterno { get; set; }
         private DateTime? FechaNacimiento { get; set; }
-        [JsonProperty("fecha_nacimiento")]
+        [JsonProperty("fechaNacimiento")]
         public string FechaNacimientoString
         {
             get

@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using JKM.APPLICATION.Queries.Venta.GetCuotasVentaById;
@@ -33,14 +32,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetVentaPaginado([FromQuery] GetVentaPaginadoQuery request)
         {
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet(template: "{idVenta}")]
@@ -49,14 +41,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetVentaById([FromQuery] GetVentaByIdQuery request)
         {
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet(template: "Estado")]
@@ -65,14 +50,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetEstadosVenta()
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetEstadoVentaQuery()));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetEstadoVentaQuery()));
         }
 
         [HttpGet(template: "Tipo")]
@@ -81,14 +59,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTiposVenta()
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetTipoVentaQuery()));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetTipoVentaQuery()));
         }
 
         [HttpGet(template: "{idVenta}/Cuotas")]
@@ -97,14 +68,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetCuotasVentaById(int idVenta)
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetCuotasVentaByIdQuery { IdVenta = idVenta}));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetCuotasVentaByIdQuery { IdVenta = idVenta }));
         }
     }
 }

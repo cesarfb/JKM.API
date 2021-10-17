@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using JKM.APPLICATION.Queries.Proyecto.GetActividadesByProyecto;
@@ -38,14 +37,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetProyectoPaginado([FromQuery] GetProyectoPaginadoQuery request)
         {
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet(template: "{idProyecto}")]
@@ -54,14 +46,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetProyectoById(int idProyecto)
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetProyectoByIdQuery { IdProyecto = idProyecto }));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetProyectoByIdQuery { IdProyecto = idProyecto }));
         }
 
         [HttpGet(template: "Estado")]
@@ -71,14 +56,7 @@ namespace JKM.API.Controllers
         public async Task<IActionResult> GetEstadosProyecto()
         {
             GetEstadosProyectoQuery request = new GetEstadosProyectoQuery();
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpPost()]
@@ -87,14 +65,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterProyecto([FromBody] RegisterProyectoCommand request)
         {
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpPut(template: "{idProyecto}")]
@@ -103,15 +74,8 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateProyecto(int idProyecto, [FromBody] UpdateProyectoCommand request)
         {
-            try
-            {
-                request.IdProyecto = idProyecto;
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            request.IdProyecto = idProyecto;
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet(template: "{idProyecto}/Trabajadores")]
@@ -120,14 +84,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadoresByProyecto(int idProyecto)
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetTrabajadoresByProyectoQuery { IdProyecto = idProyecto}));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetTrabajadoresByProyectoQuery { IdProyecto = idProyecto }));
         }
 
         [HttpPost(template: "{idProyecto}/Trabajadores")]
@@ -136,15 +93,8 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterTrabajadorByProyecto(int idProyecto, [FromBody] RegisterTrabajadorByProyectoCommand request)
         {
-            try
-            {
-                request.IdProyecto = idProyecto;
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            request.IdProyecto = idProyecto;
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpDelete(template: "{idProyecto}/Trabajadores/{idTrabajador}")]
@@ -153,19 +103,12 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> DeleteTrabajadorByProyecto(int idProyecto, int idTrabajador)
         {
-            try
+            DeleteTrabajadorByProyectoCommand request = new DeleteTrabajadorByProyectoCommand
             {
-                DeleteTrabajadorByProyectoCommand request = new DeleteTrabajadorByProyectoCommand
-                {
-                    IdProyecto = idProyecto,
-                    IdTrabajador = idTrabajador
-                };
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+                IdProyecto = idProyecto,
+                IdTrabajador = idTrabajador
+            };
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet(template: "{idProyecto}/Actividades")]
@@ -174,14 +117,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetActividadesByProyecto(int idProyecto)
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetActividadesByProyectoQuery { IdProyecto = idProyecto}));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetActividadesByProyectoQuery { IdProyecto = idProyecto }));
         }
 
         [HttpPut(template: "{idProyecto}/Actividades/{idActividad}")]
@@ -190,16 +126,9 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateActividadByProyecto(int idProyecto, int idActividad, [FromBody] UpdateActividadByProyectoCommand request)
         {
-            try
-            {
-                request.IdProyecto = idProyecto;
-                request.IdActividad = idActividad;
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            request.IdProyecto = idProyecto;
+            request.IdActividad = idActividad;
+            return Ok(await _mediator.Send(request));
         }
     }
 }

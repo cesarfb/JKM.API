@@ -113,5 +113,10 @@ namespace JKM.PERSISTENCE.Repository.Trabajador
                 }
             }
         }
+
+        public Task<ResponseModel> DeleteTrabajador(int idTrabajador)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

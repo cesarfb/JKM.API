@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using JKM.APPLICATION.Queries.Trabajador.GetTrabajadoresPaginado;
@@ -14,6 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using JKM.APPLICATION.Commands.Trabajador.RegisterTrabajador;
 using JKM.APPLICATION.Commands.Trabajador.UpdateTrabajador;
+using JKM.APPLICATION.Commands.Trabajador.DeleteTrabajador;
 
 namespace JKM.API.Controllers
 {
@@ -35,16 +35,9 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadorPaginado([FromQuery] GetTrabajadoresPaginadoQuery request)
         {
-            try
-            {
-                var response = await _mediator.Send(request);
-                if (response == null) return NotFound(new { msg = "Error al traer los resultados" });
-                return Ok(response);
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            var response = await _mediator.Send(request);
+            if (response == null) return NotFound(new { msg = "Error al traer los resultados" });
+            return Ok(response);
         }
 
         [HttpPost]
@@ -53,14 +46,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> RegisterTrabajador([FromBody] RegisterTrabajadorCommand request)
         {
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpPut(template: "{idTrabajador}")]
@@ -69,17 +55,19 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> UpdateTrabajador(int idTrabajador, [FromBody] UpdateTrabajadorCommand request)
         {
-            try
-            {
-                request.IdTrabajador = idTrabajador;
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            request.IdTrabajador = idTrabajador;
+            return Ok(await _mediator.Send(request));
         }
 
+        [HttpDelete(template: "{idTrabajador}")]
+        [SwaggerOperation("Elimina un trabajador en basea su id")]
+        [SwaggerResponse(200, "Elimina un trabajador", typeof(ResponseModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> DeleteTranbajador(int idTrabajador)
+        {
+            DeleteTrabajadorCommand request = new DeleteTrabajadorCommand() { IdTrabajador = idTrabajador };
+            return Ok(await _mediator.Send(request));
+        }
 
         [HttpGet(template: "{idTrabajador}")]
         [SwaggerOperation("Retorna un trabajador en base a su Id")]
@@ -87,14 +75,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadorById(int idTrabajador)
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetTrabajadorByIdQuery { IdTrabajador = idTrabajador }));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetTrabajadorByIdQuery { IdTrabajador = idTrabajador }));
         }
 
         [HttpGet(template: "Estado/{idEstado}")]
@@ -103,14 +84,7 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetTrabajadorByEstado(int idEstado)
         {
-            try
-            {
-                return Ok(await _mediator.Send(new GetTrabajadorByEstadoQuery { IdEstado = idEstado }));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(new GetTrabajadorByEstadoQuery { IdEstado = idEstado }));
         }
 
         [HttpGet(template: "Estado")]
@@ -119,18 +93,11 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetEstadoTrabajador()
         {
-            try
-            {
-                var response = await _mediator.Send(new GetEstadoTrabajadorQuery());
-                if (response == null) return NotFound(new { msg = "Error al traer los resultados" });
-                return Ok(response);
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            var response = await _mediator.Send(new GetEstadoTrabajadorQuery());
+            if (response == null) return NotFound(new { msg = "Error al traer los resultados" });
+            return Ok(response);
         }
-        
+
         [HttpGet(template: "Tipo")]
         [SwaggerOperation("Retorna los tipos de trabajadores")]
         [SwaggerResponse(200, "Retorna los tipos", typeof(IEnumerable<TipoTrabajador>))]
@@ -138,14 +105,7 @@ namespace JKM.API.Controllers
         public async Task<IActionResult> GetTipoTrabajador()
         {
             GetTipoTrabajadorQuery request = new GetTipoTrabajadorQuery();
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error);
-            }
+            return Ok(await _mediator.Send(request));
         }
     }
 }

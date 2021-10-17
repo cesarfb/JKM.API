@@ -7,5 +7,6 @@ namespace JKM.PERSISTENCE.Repository.Trabajador
     {
         Task<ResponseModel> RegisterTrabajador(TrabajadorModel model);
         Task<ResponseModel> UpdateTrabajador(TrabajadorModel model);
+        Task<ResponseModel> DeleteTrabajador(int idTrabajador);
     }
 }

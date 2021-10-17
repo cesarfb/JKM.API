@@ -1,4 +1,5 @@
 ﻿using JKM.UTILITY.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -57,6 +58,7 @@ namespace JKM.APPLICATION.Aggregates
         public int? IdCliente { get; set; }
         public decimal? Precio { get; set; }
         private DateTime? FechaInicio { get; set; }
+        [JsonProperty("fechaInicio")]
         public string FechaInicioString
         {
             get
@@ -65,6 +67,7 @@ namespace JKM.APPLICATION.Aggregates
             }
         }
         private DateTime? FechaFin { get; set; }
+        [JsonProperty("fechaFin")]
         public string FechaFinString
         {
             get
@@ -106,6 +109,7 @@ namespace JKM.APPLICATION.Aggregates
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         private DateTime? FechaNacimiento { get; set; }
+        [JsonProperty("fechaNacimiento")]
         public string FechaNacimientoString
         {
             get

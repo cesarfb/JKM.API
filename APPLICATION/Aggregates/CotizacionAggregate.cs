@@ -1,4 +1,5 @@
 ﻿using JKM.UTILITY.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +11,7 @@ namespace JKM.APPLICATION.Aggregates
         public string solicitante { get; set; }
         public string descripcion { get; set; }
         private DateTime fechaSolicitud { get; set; }
+        [JsonProperty("fechaNacimiento")]
         public string fechaSolicitudString
         {
             get

@@ -15,7 +15,7 @@ namespace JKM.APPLICATION.Aggregates
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         private DateTime FechaNacimiento { get; set; }
-        [JsonProperty("fecha_nacimiento")]
+        [JsonProperty("fechaNacimiento")]
         public string FechaNacimientoString
         {
             get
