@@ -21,7 +21,7 @@ namespace JKM.PERSISTENCE.Repository.Cliente
         {
             string sql = $@"SELECT COUNT(1) 
                             FROM Cliente
-                            WHERE RUC = {clienteModel.RUC.ToUpper()};";
+                            WHERE RUC = '{clienteModel.RUC.ToUpper()}';";
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
@@ -61,7 +61,7 @@ namespace JKM.PERSISTENCE.Repository.Cliente
         {
             string sql = $@"SELECT COUNT(1) 
                             FROM Cliente
-                            WHERE RUC = {clienteModel.RUC.ToUpper()} AND idCliente != {clienteModel.IdCliente};";
+                            WHERE RUC = '{clienteModel.RUC.ToUpper()}' AND idCliente != {clienteModel.IdCliente};";
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)

@@ -23,30 +23,27 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
             string sql = $@"SELECT COUNT(1) FROM Cotizacion;";
 
             sql += $@"SELECT C.idCotizacion, C.solicitante, C.descripcion, C.fechaSolicitud,
-			            C.descripcion, C.email, C.empresa,
-			            EC.idEstado, EC.descripcion as 'descripcionEstado',
-			            PC.idPrecioCotizacion, PC.precioCotizacion,
-			            CASE WHEN C.idEstado = 1
-					        THEN 1 ELSE 0 END 'canEdit',
-			            CASE WHEN C.idEstado = 1
-					        THEN 1 ELSE 0 END 'canDelete',
-			            CASE WHEN C.idEstado = 1
-					              AND ISNULL(TRIM(C.descripcion),'') <> ''
-					              AND PC.precioCotizacion > 0
-					              AND (SELECT COUNT(1) 
-						               FROM TipoTrabajadorCotizacion 
-						               WHERE idCotizacion = C.idCotizacion) > 0
-					              AND (SELECT COUNT(1) 
-							           FROM ActividadProyecto
-						               WHERE idCotizacion = C.idCotizacion) > 0
-					        THEN 1
-					        ELSE 0 END AS 'canCotizar'
-	                    FROM Cotizacion C 
-		                INNER JOIN EstadoCotizacion EC  ON (C.idEstado = EC.idEstado)
-		                LEFT JOIN PrecioCotizacion PC  ON(C.idCotizacion = PC.idCotizacion 
-						                                   AND PC.fecha = (SELECT MAX(fecha) 
-										        		                   FROM PrecioCotizacion 
-																           WHERE idCotizacion = C.idCotizacion))
+                        C.descripcion, C.email, CLI.idCliente, CLI.razonSocial,
+                        EC.idEstado, EC.descripcion as 'descripcionEstado',
+                        C.precioCotizacion,
+                        CASE WHEN C.idEstado = 1
+	                        THEN 1 ELSE 0 END 'canEdit',
+                        CASE WHEN C.idEstado = 1
+	                        THEN 1 ELSE 0 END 'canDelete',
+                        CASE WHEN C.idEstado = 1
+			                        AND ISNULL(TRIM(C.descripcion),'') <> ''
+			                        AND C.precioCotizacion > 0
+			                        AND (SELECT COUNT(1) 
+				                        FROM TipoTrabajadorCotizacion 
+				                        WHERE idCotizacion = C.idCotizacion) > 0
+			                        AND (SELECT COUNT(1) 
+				                        FROM ActividadProyecto
+				                        WHERE idCotizacion = C.idCotizacion) > 0
+	                        THEN 1
+	                        ELSE 0 END AS 'canCotizar'
+                        FROM Cotizacion C 
+                        INNER JOIN EstadoCotizacion EC  ON (C.idEstado = EC.idEstado)
+                        INNER JOIN Cliente CLI ON CLI.idCliente=C.idCliente
 	                    ORDER BY C.fechaSolicitud DESC
 	                    OFFSET (({request.Pages} - 1) * {request.Rows}) ROWS FETCH NEXT {request.Rows} ROWS ONLY;";
 
