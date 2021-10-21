@@ -47,7 +47,8 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
 						                                   AND PC.fecha = (SELECT MAX(fecha) 
 										        		                   FROM PrecioCotizacion 
 																           WHERE idCotizacion = C.idCotizacion))
-	                    ORDER BY C.fechaSolicitud DESC;";
+	                    ORDER BY C.fechaSolicitud DESC
+	                    OFFSET (({request.Pages} - 1) * {request.Rows}) ROWS FETCH NEXT {request.Rows} ROWS ONLY;";
 
             using (IDbConnection connection = _conexion)
             {
