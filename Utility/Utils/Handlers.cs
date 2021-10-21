@@ -31,7 +31,7 @@ namespace JKM.UTILITY.Utils
 
         public static void ExceptionClose(IDbConnection connection, string msg = "")
         {
-            if(connection.State != ConnectionState.Closed)
+            if (connection.State != ConnectionState.Closed)
                 connection.Close();
             throw new DBConcurrencyException(msg);
         }
@@ -45,6 +45,20 @@ namespace JKM.UTILITY.Utils
 
             ResponseModel response = new ResponseModel();
             response.Message = msg;
+
+            return response;
+        }
+
+        public static ResponseModel CloseConnection(IDbConnection connection, TransactionScope transaction = null, string msg = "", Object data = null)
+        {
+            if (transaction != null)
+                transaction.Complete();
+            if (connection.State != ConnectionState.Closed)
+                connection.Close();
+
+            ResponseModel response = new ResponseModel();
+            response.Message = msg;
+            response.Data = data;
 
             return response;
         }

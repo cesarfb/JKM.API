@@ -101,16 +101,18 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     connection.Open();
 
                     string insert = $@"INSERT INTO Cotizacion 
-                                        (solicitante,descripcion,fechaSolicitud,email,empresa,idEstado)
+                                        (solicitante,descripcion,fechaSolicitud,email,idCliente,idEstado, precioCotizacion, idTipoCotizacion)
 		                                VALUES
-		                                (@Solicitante,@Descripcion,@FechaSolicitud,@Email,@Empresa,1);";
+		                                (@Solicitante,@Descripcion,@FechaSolicitud,@Email,@IdCliente,1, @PrecioCotizacion, 1);
+                                        
+                                        SELECT ISNULL(@@IDENTITY,-1);";
 
-                    int hasInsert = await connection.ExecuteAsync(insert, cotizacionModel);
+                    decimal hasInsert = (decimal)await connection.ExecuteScalarAsync(insert, cotizacionModel);
 
                     if (hasInsert <= 0)
                         Handlers.ExceptionClose(connection, "Error al registrar la cotización");
 
-                    return Handlers.CloseConnection(connection, trans, "Se registró la cotización");
+                    return Handlers.CloseConnection(connection, trans, "Se registró la cotización", hasInsert);
                 }
                 catch (SqlException err)
                 {
@@ -124,9 +126,6 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
             string sql = $@"SELECT COUNT(*) 
 							FROM EstadoCotizacion 
 							WHERE idEstado = {cotizacionModel.IdEstado};";
-            sql += $@"SELECT COUNT(*) 
-					  FROM PrecioCotizacion 
-					  WHERE idPrecioCotizacion = {cotizacionModel.IdPrecioCotizacion};";
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
@@ -135,55 +134,23 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                 {
                     connection.Open();
 
-                    using (GridReader multi = await connection.QueryMultipleAsync(sql))
-                    {
-                        int existEstado = multi.ReadFirst<int>();
-                        int hasPaid = multi.ReadFirst<int>();
 
-                        if (existEstado <= 0)
-                            Handlers.ExceptionClose(connection, "No se encontró el estado");
-
-                        if (hasPaid == 0)
-                        {
-                            string insert = $@"INSERT INTO PrecioCotizacion
-				                                (precioCotizacion,fecha,idCotizacion) 
-				                                VALUES
-				                                (@PrecioCotizacion,GETDATE(),@IdCotizacion);";
-
-                            int hasInsert = await connection.ExecuteAsync(insert, cotizacionModel);
-
-                            if (hasInsert <= 0)
-                                Handlers.ExceptionClose(connection, "Error al registrar");
-
-                        }
-                        else if (hasPaid > 0)
-                        {
-                            string updatePrice = $@"UPDATE PrecioCotizacion
-				                                       SET precioCotizacion = @PrecioCotizacion
-				                                       WHERE idPrecioCotizacion = @IdPrecioCotizacion;";
-
-                            int hasUpdatePrice = await connection.ExecuteAsync(updatePrice, cotizacionModel);
-
-                            if (hasUpdatePrice <= 0)
-                                Handlers.ExceptionClose(connection, "Error al actualizar");
-                        }
-
-                        string update = $@"UPDATE Cotizacion	
+                    string update = $@"UPDATE Cotizacion	
 			                                    SET solicitante = @Solicitante,
 				                                    descripcion = @Descripcion,
 				                                    fechaSolicitud = @FechaSolicitud,
 				                                    email = @Email,
-				                                    empresa = @Empresa,
-				                                    idEstado = @IdEstado
+				                                    idCliente = @IdCliente,
+                                                    precioCotizacion = @PrecioCotizacion
 			                                    WHERE idCotizacion = @IdCotizacion;";
 
-                        int hasUpdate = await connection.ExecuteAsync(update, cotizacionModel);
+                    int hasUpdate = await connection.ExecuteAsync(update, cotizacionModel);
 
-                        if (hasUpdate <= 0)
-                            Handlers.ExceptionClose(connection, "Error al actualizar");
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Error al actualizar");
 
-                        return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
-                    }
+                    return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
+
                 }
                 catch (SqlException err)
                 {
@@ -225,7 +192,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     string insert = $@"INSERT INTO TipoTrabajadorCotizacion
 		                                       (idCotizacion, idTipoTrabajador, precio, cantidad)
 		                                       VALUES
-		                                       (@IdCotizacion, @IdTipo, @Precio, @Cantidad);";
+		                                       (@IdCotizacion, @IdTipoTrabajador, @Precio, @Cantidad);";
 
                     int hasInsert = await connection.ExecuteAsync(insert, trabajadorModel);
 

@@ -16,11 +16,12 @@ namespace JKM.APPLICATION.Aggregates
         {
             get
             {
-                return fechaSolicitud.ToString("yyyy-MM-dd");
+                return fechaSolicitud.ToString("dd-MM-yyyy");
             }
         }
         public string email { get; set; }
-        public string empresa { get; set; }
+        public int idCliente { get; set; }
+        public string razonSocial { get; set; }
         public Identifier Estado
         {
             get
@@ -32,23 +33,9 @@ namespace JKM.APPLICATION.Aggregates
                 };
             }
         }
-
-        public IdentifierPrecio Precio
-        {
-            get
-            {
-                return new IdentifierPrecio
-                {
-                    id = idPrecioCotizacion,
-                    precio = precioCotizacion
-                };
-            }
-        }
-
         private int idEstado { get; set; }
         private string descripcionEstado { get; set; }
-        private int idPrecioCotizacion { get; set; }
-        private double precioCotizacion { get; set; }
+        public double precioCotizacion { get; set; }
         public bool canCotizar { get; set; }
         public bool canDelete { get; set; }
         public bool canEdit { get; set; }
