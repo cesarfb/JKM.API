@@ -24,8 +24,7 @@ namespace JKM.APPLICATION.Queries.Cliente.GetClientePaginado
 
             sql += $@"SELECT C.idCliente, C.ruc, C.razonSocial, C.telefono
 	                    FROM Cliente C
-                        ORDER BY C.razonSocial DESC
-	                    OFFSET (({request.Pages} - 1) * {request.Rows}) ROWS FETCH NEXT {request.Rows} ROWS ONLY;";
+                        ORDER BY C.razonSocial DESC;";
 
             using (IDbConnection connection = _conexion)
             {
@@ -38,7 +37,6 @@ namespace JKM.APPLICATION.Queries.Cliente.GetClientePaginado
                     {
                         newPaginado.TotalRows = multi.ReadFirst<int>();
                         newPaginado.Data = multi.Read<ClienteModel>().AsList();
-                        newPaginado.TotalPages = Math.Ceiling(newPaginado.TotalRows / request.Rows);
                     }
                     connection.Close();
 

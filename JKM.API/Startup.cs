@@ -136,9 +136,9 @@ namespace JKM.API
             {
                 Host = smtpModel.Host,
                 Port = smtpModel.Port,
+                UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(smtpModel.Username, smtpModel.Password),
                 EnableSsl = true,
-
             }
             ).AddTransient((serviceProvider) => new MailMessage()
             {

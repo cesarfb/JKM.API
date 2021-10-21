@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using JKM.APPLICATION.Utils;
 
 namespace JKM.API.Controllers
 {
@@ -30,8 +31,8 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> ContactUs([FromBody] ContactUsNotificationCommand request)
         {
-            request.Path = "/Reports/Templates/ContactUsHtml.html";
-            request.Logo = "/Reports/Assets/JKMLOGO.png";
+            request.Path = "Reports/Templates/ContactUsHtml.html";
+            request.Logo = "Reports/Assets/JKMLOGO.png";
             await _mediator.Publish(request);
             return Ok();
         }

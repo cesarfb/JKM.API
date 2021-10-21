@@ -29,9 +29,9 @@ namespace JKM.API.Controllers
         [SwaggerResponse(200, "Retorna los clientes", typeof(PaginadoResponse<ClienteModel>))]
         [SwaggerResponse(204, "No se encontraron clientes")]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> GetClientePaginado([FromQuery] GetClientePaginadoQuery request)
+        public async Task<IActionResult> GetClientePaginado()
         {
-            return Ok(await _mediator.Send(request));
+            return Ok(await _mediator.Send(new GetClientePaginadoQuery()));
         }
 
         [HttpPost]
