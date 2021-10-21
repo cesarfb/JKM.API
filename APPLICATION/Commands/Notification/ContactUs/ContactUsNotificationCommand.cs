@@ -9,7 +9,6 @@ namespace JKM.APPLICATION.Commands.Notification.ContactUs
         public string EmailAddress { get; set; }
         public string Empresa { get; set; }
         public string Nombre { get; set; }
-        public string Apellido { get; set; }
         public string Telefono { get; set; }
         public string Mensaje { get; set; }
         [SwaggerSchema(ReadOnly = true)]
@@ -28,8 +27,6 @@ namespace JKM.APPLICATION.Commands.Notification.ContactUs
                 .NotEmpty().WithMessage("Debe llenar la información de la empresa");
             RuleFor(x => x.Nombre)
                 .NotEmpty().WithMessage("El campo nombre no puede estar vacío");
-            RuleFor(x => x.Apellido)
-                .NotEmpty().WithMessage("El campo apellidos no puede estar vacío");
             RuleFor(x => x.Mensaje)
                 .NotEmpty().WithMessage("Debe llenar la información del mensaje");
             RuleFor(x => x.Telefono)

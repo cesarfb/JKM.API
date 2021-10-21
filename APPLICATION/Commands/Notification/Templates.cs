@@ -14,7 +14,6 @@ namespace JKM.APPLICATION.Utils
             .Replace("{EMPRESA}", model.Empresa)
             .Replace("{EMAIL}", model.EmailAddress)
             .Replace("{NOMBRE}", model.Nombre)
-            .Replace("{APELLIDO}", model.Apellido)
             .Replace("{TELEFONO}", model.Telefono.ToString())
             .Replace("{MENSAJE}", model.Mensaje);
 
