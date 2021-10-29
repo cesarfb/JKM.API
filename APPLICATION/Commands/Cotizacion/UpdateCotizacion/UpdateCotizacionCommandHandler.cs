@@ -18,9 +18,8 @@ namespace JKM.APPLICATION.Commands.Cotizacion.UpdateCotizacion
         public async Task<ResponseModel> Handle(UpdateCotizacionCommand request, CancellationToken cancellationToken)
         {
             CotizacionModel cotizacion = new CotizacionModel();
-            cotizacion.UpdateCotizacion(solicitante: request.Solicitante, fechaSolicitud: request.FechaSolicitud, descripcion: request.Descripcion, 
-                email: request.Email,empresa: request.Empresa, idCotizacion: request.IdCotizacion, idEstado: request.IdEstado, 
-                request.IdPrecioCotizacion, request.PrecioCotizacion);
+            cotizacion.UpdateCotizacion(solicitante: request.Solicitante, fechaSolicitud: request.FechaSolicitud, descripcion: request.Descripcion,
+                email: request.Email, idCliente: request.IdCliente, idCotizacion: request.IdCotizacion, request.PrecioCotizacion);
 
             return await _cotizacionRepository.UpdateCotizacion(cotizacion);
         }

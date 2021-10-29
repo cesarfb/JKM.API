@@ -11,7 +11,8 @@ namespace JKM.APPLICATION.Commands.Cotizacion.RegisterCotizacion
         public string Descripcion { get; set; }
         public DateTime? FechaSolicitud { get; set; }
         public string Email { get; set; }
-        public string Empresa { get; set; }
+        public int IdCliente { get; set; }
+        public double PrecioCotizacion { get; set; }
     }
 
     public class Validator : AbstractValidator<RegisterCotizacionCommand>
@@ -23,8 +24,8 @@ namespace JKM.APPLICATION.Commands.Cotizacion.RegisterCotizacion
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("El Email no puede ser vacío")
                 .EmailAddress().WithMessage("Formato incorrecto del correo");
-            RuleFor(x => x.Empresa)
-                .NotEmpty().WithMessage("El solicitante no puede ser vacío");
+            RuleFor(x => x.IdCliente)
+                .NotEmpty().WithMessage("El cliente no puede ser vacío");
         }
     }
 }

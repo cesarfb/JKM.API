@@ -20,15 +20,12 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionById
         public async Task<CotizacionModel> Handle(GetCotizacionByIdQuery request, CancellationToken cancellationToken)
         {
             string sql = $@"SELECT C.idCotizacion, C.solicitante, C.descripcion, C.fechaSolicitud,
-			                    C.descripcion, C.email, C.empresa,
-			                    EC.idEstado, EC.descripcion as 'descripcionEstado',
-			                    PC.idPrecioCotizacion, PC.precioCotizacion
-		                    FROM Cotizacion C 
-		                    INNER JOIN EstadoCotizacion EC  ON(C.idEstado = EC.idEstado)
-		                    LEFT JOIN PrecioCotizacion PC  ON(C.idCotizacion = PC.idCotizacion 
-											                    AND PC.fecha = (SELECT MAX(fecha) 
-																                    FROM PrecioCotizacion 
-																                    WHERE idCotizacion = C.idCotizacion))
+	                            C.descripcion, C.email, CLI.idCliente, CLI.razonSocial,
+	                            EC.idEstado, EC.descripcion as 'descripcionEstado',
+	                            C.precioCotizacion
+                            FROM Cotizacion C 
+                            INNER JOIN EstadoCotizacion EC  ON(C.idEstado = EC.idEstado)
+                            INNER JOIN Cliente CLI on(CLI.idCliente = C.idCliente)
 		                    WHERE C.idCotizacion = {request.IdCotizacion}";
 
             using (IDbConnection connection = _conexion)

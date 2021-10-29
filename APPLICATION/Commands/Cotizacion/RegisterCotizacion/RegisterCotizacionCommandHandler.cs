@@ -19,7 +19,7 @@ namespace JKM.APPLICATION.Commands.Cotizacion.RegisterCotizacion
         {
             CotizacionModel model = new CotizacionModel();
             model.RegisterCotizacion(solicitante: request.Solicitante, fechaSolicitud: request.FechaSolicitud, descripcion: request.Descripcion,
-                email: request.Email, empresa: request.Empresa);
+                email: request.Email, idCliente: request.IdCliente, precioCotizacion: request.PrecioCotizacion);
             return await _cotizacionRepository.RegisterCotizacion(model);
         }  
     }

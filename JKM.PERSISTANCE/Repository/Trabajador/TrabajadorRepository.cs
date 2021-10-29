@@ -114,9 +114,40 @@ namespace JKM.PERSISTENCE.Repository.Trabajador
             }
         }
 
-        public Task<ResponseModel> DeleteTrabajador(int idTrabajador)
+        public async Task<ResponseModel> DeleteTrabajador(int idTrabajador)
         {
-            throw new System.NotImplementedException();
+            string sql = $@"SELECT COUNT(1)
+                            FROM ProyectoTrabajador
+                            WHERE idTrabajador = {idTrabajador};";
+
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (IDbConnection connection = _conexion)
+            {
+                try
+                {
+                    connection.Open();
+
+                    int bussyWorker = await connection.QueryFirstOrDefaultAsync<int>(sql);
+
+                    if (bussyWorker > 0)
+                        Handlers.ExceptionClose(connection, "El trabajador se encuentra vinculado a un proyecto actualmente.");
+
+                    string delete = $@"DELETE
+                                       FROM Trabajador
+                                       WHERE idTrabajador = {idTrabajador};";
+
+                    int hasUpdate = await connection.ExecuteAsync(delete);
+
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Error al eliminar el trabajador");
+
+                    return Handlers.CloseConnection(connection, trans, "Se eliminó el trabajador");
+                }
+                catch (SqlException err)
+                {
+                    throw err;
+                }
+            }
         }
     }
 }

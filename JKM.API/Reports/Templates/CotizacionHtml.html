@@ -8,9 +8,10 @@
     <title>Document</title>
     <style>
         * {
-            box - sizing: border-box;
+            box-sizing: border-box;
             padding: 0;
             margin: 0;
+            color: black !important;
         }
 
         table {
@@ -24,7 +25,7 @@
         }
 
         .formulario {
-            border - collapse: collapse;
+            border-collapse: collapse;
             word-break: break-all;
         }
 
@@ -38,7 +39,7 @@
         }
 
         .formulario tr:nth-child(even) {
-            background - color: #f2f2f2;
+            background-color: #f2f2f2;
         }
 
         .formulario td,
@@ -63,13 +64,19 @@
         }
 
         .center-text {
-            text - align: center;
+            text-align: center;
         }
 
         .center-table {
             margin: 0 auto;
             width: auto;
-            max-width: 400px;
+            max-width: 600px;
+        }
+
+        .indicaciones {
+            width: 50%;
+            margin: 0 auto;
+            text-align: left;
         }
     </style>
 </head>
@@ -78,7 +85,8 @@
     <table class='table-content'>
         <tr class='table-head'>
             <th>
-                <img width='190px' src='{LOGO}' />
+                <img width='190px'
+                     src='cid:{LOGO}' />
                 <hr>
             </th>
         </tr>
@@ -103,20 +111,18 @@
                         <td>{NOMBRE}</td>
                     </tr>
                     <tr>
-                        <td>Apellidos</td>
-                        <td>{APELLIDO}</td>
-                    </tr>
-                    <tr>
                         <td>Telefono</td>
                         <td>{TELEFONO}</td>
                     </tr>
                 </table>
             </td>
         </tr>
+        {PRODUCTOS}
+        {SERVICIOS}
         <tr>
-            <td class='center-text tittle'>
-                <h2 class='tittle'> Solicitud: </h2>
-                <p>{MENSAJE}</p>
+            <td class='tittle'>
+                <h2 class='tittle'> Indicaciones Adicionales: </h2>
+                <p class="indicaciones">{MENSAJE}</p>
             </td>
         </tr>
     </table>

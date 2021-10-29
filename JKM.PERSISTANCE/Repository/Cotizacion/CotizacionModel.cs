@@ -10,33 +10,30 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
         public string Descripcion { get; set; }
         public DateTime? FechaSolicitud { get; set; }
         public string Email { get; set; }
-        public string Empresa { get; set; }
+        public int IdCliente { get; set; }
         public int IdEstado { get; set; }
-        public int IdPrecioCotizacion { get; set; }
         public double PrecioCotizacion { get; set; }
 
         public void RegisterCotizacion(string solicitante = "", DateTime? fechaSolicitud = null,
-            string descripcion = "", string email = "", string empresa = "")
+            string descripcion = "", string email = "", int idCliente = 0, double precioCotizacion = 0)
         {
             Solicitante = solicitante;
             Descripcion = descripcion;
             FechaSolicitud = fechaSolicitud;
             Email = email;
-            Empresa = empresa;
+            IdCliente = idCliente;
+            PrecioCotizacion = precioCotizacion;
         }
 
         public void UpdateCotizacion(string solicitante = "", DateTime? fechaSolicitud = null,
-            string descripcion = "", string email = "", string empresa = "", int idCotizacion = 0,
-            int idEstado = 0, int idPrecioCotizacion = 0, double precioCotizacion = 0.00)
+            string descripcion = "", string email = "", int idCliente = 0, int idCotizacion = 0, double precioCotizacion = 0.00)
         {
             IdCotizacion = idCotizacion;
             Solicitante = solicitante;
             Descripcion = descripcion;
             FechaSolicitud = fechaSolicitud;
             Email = email;
-            Empresa = empresa;
-            IdEstado = idEstado;
-            IdPrecioCotizacion = idPrecioCotizacion;
+            IdCliente = idCliente;
             PrecioCotizacion = precioCotizacion;
         }
 
