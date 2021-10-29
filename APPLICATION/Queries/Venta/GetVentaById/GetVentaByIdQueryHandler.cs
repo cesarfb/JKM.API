@@ -19,15 +19,22 @@ namespace JKM.APPLICATION.Queries.Venta.GetVentaById
 
         public async Task<VentaModel> Handle(GetVentaByIdQuery request, CancellationToken cancellationToken)
         {
-            string sql = $@"SELECT V.idVenta, V.precioTotal, V.fechaRegistro,
-			                    TV.idTipo, TV.descripcion 'TipoDescripcion', 
-			                    EV.idEstado, EV.descripcion 'EstadoDescripcion',
-			                    C.razonSocial, C.ruc
-			                FROM Venta V
-			                INNER JOIN EstadoVenta EV ON (EV.idEstado = V.idEstado)
-			                INNER JOIN TipoVenta TV ON (TV.idTipo = V.idTipo)
-			                INNER JOIN Cliente C ON (C.idCliente = V.idCliente)
-		                    WHERE V.idVenta = {request.IdVenta}";
+            string sql = $@"SELECT 
+	                        V.idVenta, 
+	                        V.precio, 
+	                        V.fechaRegistro,
+                            TV.idTipo, 
+	                        TV.descripcion 'TipoDescripcion', 
+                            EV.idEstado, 
+	                        EV.descripcion 'EstadoDescripcion',
+                            C.razonSocial, 
+	                        C.ruc
+                        FROM Venta V
+	                        INNER JOIN EstadoVenta EV ON (EV.idEstado = V.idEstado)
+	                        INNER JOIN TipoVenta TV ON (TV.idTipo = V.idTipo)
+	                        INNER JOIN Cotizacion CO ON (CO.idCotizacion = V.idCotizacion)
+	                        INNER JOIN Cliente C ON (C.idCliente = CO.idCliente)
+                        WHERE V.idVenta = {request.IdVenta}";
 
             using (IDbConnection connection = _conexion)
             {

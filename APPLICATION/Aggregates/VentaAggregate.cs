@@ -11,7 +11,7 @@ namespace JKM.APPLICATION.Aggregates
         public int NumeroCuota { get; set; }
         public double PagoParcial { get; set; }
         public DateTime? FechaCuota { get; set; }
-        [JsonProperty("fechaCuota")]
+        //[JsonProperty("fechaCuota")]
         public string FechaCuotaString
         {
             get
