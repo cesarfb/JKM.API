@@ -37,11 +37,11 @@ namespace JKM.API.Controllers
         }
 
         [HttpGet]
-        [SwaggerOperation("Retorna las cotizaciones por página")]
+        [SwaggerOperation("Retorna todas las cotizaciones")]
         [SwaggerResponse(200, "Retorna las cotizaciones", typeof(PaginadoResponse<CotizacionModel>))]
         [SwaggerResponse(204, "No se encontraron cotizaciones")]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> GetCotizacionPaginado([FromQuery] GetCotizacionPaginadoQuery request)
+        public async Task<IActionResult> GetCotizacion([FromQuery] GetCotizacion request)
         {
             return Ok(await _mediator.Send(request));
         }
@@ -68,9 +68,10 @@ namespace JKM.API.Controllers
         [SwaggerOperation("Acepta la creacion de un proyecto")]
         [SwaggerResponse(200, "Retorna mensaje de exito", typeof(ResponseModel))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
-        public async Task<IActionResult> Aceptar(int idCotizacion)
+        public async Task<IActionResult> Aceptar(int idCotizacion, AceptarCotizacionCommand cotizacionCommand)
         {
-            return Ok(await _mediator.Send(new AceptarCotizacionCommand { IdCotizacion = idCotizacion }));
+            cotizacionCommand.IdCotizacion = idCotizacion;
+            return Ok(await _mediator.Send(cotizacionCommand));
         }
 
         [HttpPut(template: "{idCotizacion}/Rechazar")]
@@ -145,7 +146,7 @@ namespace JKM.API.Controllers
 
         [HttpGet(template: "{idCotizacion}/Actividades")]
         [SwaggerOperation("Retorna las actividades de una cotizacion")]
-        [SwaggerResponse(200, "Retorna las actividades", typeof(IEnumerable<ActividadCotizacionModel>))]
+        [SwaggerResponse(200, "Retorna las actividades", typeof(IEnumerable<ActividadCotizancionTreeNode>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetActividadesByCotizacion(int idCotizacion)
         {

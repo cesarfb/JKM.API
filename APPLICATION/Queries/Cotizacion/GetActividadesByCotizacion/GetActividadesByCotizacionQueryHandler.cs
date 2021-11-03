@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
 {
-    public class GetActividadesByCotizacionQueryHandler : IRequestHandler<GetActividadesByCotizacionQuery, IEnumerable<ActividadCotizacionModel>>
+    public class GetActividadesByCotizacionQueryHandler : IRequestHandler<GetActividadesByCotizacionQuery, IEnumerable<ActividadCotizancionTreeNode>>
     {
         private readonly IDbConnection _conexion;
         public GetActividadesByCotizacionQueryHandler(IDbConnection conexion)
@@ -20,7 +20,7 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
             _conexion = conexion;
         }
 
-        public async Task<IEnumerable<ActividadCotizacionModel>> Handle(GetActividadesByCotizacionQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ActividadCotizancionTreeNode>> Handle(GetActividadesByCotizacionQuery request, CancellationToken cancellationToken)
         {
             string sql = $@"SELECT AP.idActividad, AP.descripcion, AP.fechaInicio, AP.fechaFin,
 		                        AP.peso, AP.idPadre, AP.idHermano,
@@ -41,28 +41,52 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
                     connection.Close();
 
                     //FORMATEARLO
-                    IEnumerable<ActividadCotizacionModel> actividadModel = (from actividadPadre in actividades
-                                                                            where (actividadPadre.IdPadre == 0)
-                                                                            select new ActividadCotizacionModel
+                    IEnumerable<ActividadCotizancionTreeNode> actividadModel = (from actividadPadre in actividades
+                                                                            where (actividadPadre.IdPadre == null)
+                                                                            select new ActividadCotizancionTreeNode
                                                                             {
-                                                                                IdActividad = actividadPadre.IdActividad,
-                                                                                Descripcion = actividadPadre.Descripcion,
-                                                                                Peso = actividadPadre.Peso,
-                                                                                IdPadre = actividadPadre.IdPadre,
-                                                                                IdHermano = actividadPadre.IdHermano,
-                                                                                IdEstado = actividadPadre.IdEstado,
-                                                                                DescripcionEstado = actividadPadre.DescripcionEstado,
-                                                                                Hijo = (from actividadHijo in actividades
-                                                                                        where (actividadHijo.IdPadre == actividadPadre.IdActividad)
-                                                                                        select new ActividadCotizacionModel
+                                                                                data = new ActividadCotizacionModel()
+                                                                                {
+                                                                                    IdActividad = actividadPadre.IdActividad,
+                                                                                    Descripcion = actividadPadre.Descripcion,
+                                                                                    Peso = actividadPadre.Peso,
+                                                                                    IdPadre = actividadPadre.IdPadre,
+                                                                                    IdHermano = actividadPadre.IdHermano,
+                                                                                    IdEstado = actividadPadre.IdEstado,
+                                                                                    DescripcionEstado = actividadPadre.DescripcionEstado,
+                                                                                    Profundidad = 1
+                                                                                },
+                                                                                children = (from actividadPrimerHijo in actividades
+                                                                                        where (actividadPrimerHijo.IdPadre == actividadPadre.IdActividad)
+                                                                                        select new ActividadCotizancionTreeNode
                                                                                         {
-                                                                                            IdActividad = actividadHijo.IdActividad,
-                                                                                            Descripcion = actividadHijo.Descripcion,
-                                                                                            Peso = actividadHijo.Peso,
-                                                                                            IdPadre = actividadHijo.IdPadre,
-                                                                                            IdHermano = actividadHijo.IdHermano,
-                                                                                            IdEstado = actividadHijo.IdEstado,
-                                                                                            DescripcionEstado = actividadHijo.DescripcionEstado,
+                                                                                            data = new ActividadCotizacionModel()
+                                                                                            {
+                                                                                                IdActividad = actividadPrimerHijo.IdActividad,
+                                                                                                Descripcion = actividadPrimerHijo.Descripcion,
+                                                                                                Peso = actividadPrimerHijo.Peso,
+                                                                                                IdPadre = actividadPrimerHijo.IdPadre,
+                                                                                                IdHermano = actividadPrimerHijo.IdHermano,
+                                                                                                IdEstado = actividadPrimerHijo.IdEstado,
+                                                                                                DescripcionEstado = actividadPrimerHijo.DescripcionEstado,
+                                                                                                Profundidad = 2
+                                                                                            },
+                                                                                            children = (from actividadSegundoHijo in actividades
+                                                                                                    where (actividadSegundoHijo.IdPadre == actividadPrimerHijo.IdActividad)
+                                                                                                    select new ActividadCotizancionTreeNode
+                                                                                                    {
+                                                                                                        data = new ActividadCotizacionModel()
+                                                                                                        {
+                                                                                                            IdActividad = actividadSegundoHijo.IdActividad,
+                                                                                                            Descripcion = actividadSegundoHijo.Descripcion,
+                                                                                                            Peso = actividadSegundoHijo.Peso,
+                                                                                                            IdPadre = actividadSegundoHijo.IdPadre,
+                                                                                                            IdHermano = actividadSegundoHijo.IdHermano,
+                                                                                                            IdEstado = actividadSegundoHijo.IdEstado,
+                                                                                                            DescripcionEstado = actividadSegundoHijo.DescripcionEstado,
+                                                                                                            Profundidad = 3
+                                                                                                        }
+                                                                                                    })
                                                                                         })
                                                                             });
 

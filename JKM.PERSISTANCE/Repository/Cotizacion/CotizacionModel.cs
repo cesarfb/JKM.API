@@ -80,8 +80,9 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
             IdCotizacion = idCotizacion;
         }
         public void UpdateActividad(string descripcion = "", int peso = 0, int? idPadre = 0,
-            int? idHermano = 0, int idActividad = 0)
+            int? idHermano = 0, int idActividad = 0, int idCotizacion = 0)
         {
+            IdCotizacion = idCotizacion;
             Descripcion = descripcion;
             Peso = peso;
             IdPadre = idPadre;

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using JKM.PERSISTENCE.Repository.Proyecto;
 using JKM.UTILITY.Utils;
 using System.Data;
 using System.Data.SqlClient;
@@ -17,7 +18,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
             _conexion = conexion;
         }
 
-        public async Task<ResponseModel> AceptarCotizacion(int idCotizacion)
+        public async Task<ResponseModel> AceptarCotizacion(int idCotizacion, ProyectoModel proyectoModel)
         {
             string sql = $@"SELECT COUNT(1) 
 						    FROM Cotizacion 
@@ -36,16 +37,28 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     if (exist == 0)
                         Handlers.ExceptionClose(connection, "No se encontró la cotización");
 
+                    //Aceptar Cotizacion
                     string update = $@"UPDATE Cotizacion
 		                                   SET idEstado = 2
 		                                   WHERE idCotizacion = {idCotizacion};";
-
+                    
                     int hasUpdate = await connection.ExecuteAsync(update);
 
                     if (hasUpdate <= 0)
                         Handlers.ExceptionClose(connection, "Error al actualizar la cotización");
 
-                    return Handlers.CloseConnection(connection, trans, "Se actualizó la cotización");
+                    //Insert Proyecto
+                    string insert = $@"INSERT INTO Proyecto 
+                                        (nombre,descripcion, idEstado, idCotizacion)
+		                                VALUES
+		                                (@NombreProyecto,@Descripcion, 1, @IdCotizacion);";
+
+                    int hasInsert = await connection.ExecuteAsync(insert, proyectoModel);
+
+                    if (hasInsert <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al insertar el proyecto");
+
+                    return Handlers.CloseConnection(connection, trans, "Se aceptó la cotización");
                 }
                 catch (SqlException err)
                 {
@@ -302,8 +315,8 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 
             sql += $@"SELECT COUNT(1) 
 					  FROM ActividadProyecto 
-					  WHERE descripcion LIKE TRIM({actividadModel.Descripcion}) 
-						AND idPadre = {actividadModel.IdPadre}
+					  WHERE descripcion LIKE TRIM('{actividadModel.Descripcion}') 
+						AND isnull(idPadre,0) =  {actividadModel.IdPadre ?? 0}
 						AND idCotizacion = {actividadModel.IdCotizacion};";
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -328,7 +341,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     string insert = $@"INSERT INTO ActividadProyecto
 		                                        (descripcion, peso, idEstado, idPadre, idHermano, idCotizacion)
 		                                        VALUES
-		                                        (TRIM(@Descripcion), @Peso, 1, @IdPadre, @IdHermano, @IdCotizacion);";
+		                                        (TRIM(@Descripcion), @Peso, 1, @IdPadre, null, @IdCotizacion);";
 
                     int hasInsert = await connection.ExecuteAsync(insert, actividadModel);
 
@@ -375,7 +388,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     string sqlActRepeat = $@"SELECT COUNT(1) 
 							                     FROM ActividadProyecto 
 							                     WHERE descripcion LIKE TRIM(@Descripcion) 
-								                    AND idPadre = @IdPadre
+								                    AND isnull(idPadre,0) = isnull(@IdPadre,0)
 								                    AND idActividad <> @IdActividad
 								                    AND idCotizacion = @IdCotizacion;";
 
@@ -417,7 +430,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 
             sql += $@"SELECT COUNT(1) 
 			          FROM ActividadProyecto 
-				      WHERE idActividad = {idActividad};
+				      WHERE idActividad = {idActividad}
                         AND idCotizacion = {idCotizacion}";
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -444,7 +457,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     }
 
                     string delete = $@"DELETE FROM ActividadProyecto
-		                                        WHERE idActividad = {idActividad};
+		                                        WHERE idActividad = {idActividad}
                                                     AND idCotizacion = {idCotizacion}";
 
                     int hasDelete = await connection.ExecuteAsync(delete);

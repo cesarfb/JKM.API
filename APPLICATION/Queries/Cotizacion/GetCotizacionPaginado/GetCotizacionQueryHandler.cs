@@ -3,6 +3,7 @@ using JKM.APPLICATION.Aggregates;
 using JKM.UTILITY.Utils;
 using MediatR;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading;
@@ -10,19 +11,17 @@ using System.Threading.Tasks;
 
 namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
 {
-    public class GetCotizacionPaginadoQueryHandler : IRequestHandler<GetCotizacionPaginadoQuery, PaginadoResponse<CotizacionModel>>
+    public class GetCotizacionQueryHandler : IRequestHandler<GetCotizacion, IEnumerable<CotizacionModel>>
     {
         private readonly IDbConnection _conexion;
-        public GetCotizacionPaginadoQueryHandler(IDbConnection conexion)
+        public GetCotizacionQueryHandler(IDbConnection conexion)
         {
             _conexion = conexion;
         }
 
-        public async Task<PaginadoResponse<CotizacionModel>> Handle(GetCotizacionPaginadoQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CotizacionModel>> Handle(GetCotizacion request, CancellationToken cancellationToken)
         {
-            string sql = $@"SELECT COUNT(1) FROM Cotizacion;";
-
-            sql += $@"SELECT C.idCotizacion, C.solicitante, C.descripcion, C.fechaSolicitud,
+            string sql = $@"SELECT C.idCotizacion, C.solicitante, C.descripcion, C.fechaSolicitud,
                         C.descripcion, C.email, CLI.idCliente, CLI.razonSocial,
                         EC.idEstado, EC.descripcion as 'descripcionEstado',
                         C.precioCotizacion,
@@ -44,27 +43,21 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
                         FROM Cotizacion C 
                         INNER JOIN EstadoCotizacion EC  ON (C.idEstado = EC.idEstado)
                         INNER JOIN Cliente CLI ON CLI.idCliente=C.idCliente
-	                    ORDER BY C.fechaSolicitud DESC
-	                    OFFSET (({request.Pages} - 1) * {request.Rows}) ROWS FETCH NEXT {request.Rows} ROWS ONLY;";
+	                    ORDER BY C.fechaSolicitud DESC;";
 
             using (IDbConnection connection = _conexion)
             {
                 try
                 {
-                    PaginadoResponse<CotizacionModel> newPaginado = new PaginadoResponse<CotizacionModel>();
-
                     connection.Open();
-                    using (var multi = await connection.QueryMultipleAsync(sql))
-                    {
-                        newPaginado.TotalRows = multi.ReadFirst<int>();
-                        newPaginado.Data = multi.Read<CotizacionModel>().AsList();
-                        newPaginado.TotalPages = Math.Ceiling(newPaginado.TotalRows / request.Rows);
-                    }
+                    IEnumerable<CotizacionModel> cotizaciones =
+                        await connection.QueryAsync<CotizacionModel>(sql);
+
                     connection.Close();
 
-                    if (newPaginado.Data.AsList().Count == 0) throw new ArgumentNullException();
+                    if (cotizaciones.AsList().Count == 0) throw new ArgumentNullException();
 
-                    return newPaginado;
+                    return cotizaciones;
                 }
                 catch (SqlException err)
                 {

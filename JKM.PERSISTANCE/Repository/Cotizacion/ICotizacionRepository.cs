@@ -1,11 +1,12 @@
-﻿using JKM.UTILITY.Utils;
+﻿using JKM.PERSISTENCE.Repository.Proyecto;
+using JKM.UTILITY.Utils;
 using System.Threading.Tasks;
 
 namespace JKM.PERSISTENCE.Repository.Cotizacion
 {
     public interface ICotizacionRepository
     {
-        Task<ResponseModel> AceptarCotizacion(int idCotizacion);
+        Task<ResponseModel> AceptarCotizacion(int idCotizacion, ProyectoModel proyecto);
         Task<ResponseModel> RechazarCotizacion(int idCotizacion);
         Task<ResponseModel> RegisterCotizacion(CotizacionModel cotizacionModel);
         Task<ResponseModel> UpdateCotizacion(CotizacionModel cotizacionModel);

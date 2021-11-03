@@ -1,4 +1,5 @@
 ﻿using JKM.PERSISTENCE.Repository.Cotizacion;
+using JKM.PERSISTENCE.Repository.Proyecto;
 using JKM.UTILITY.Utils;
 using MediatR;
 using System.Threading;
@@ -17,7 +18,10 @@ namespace JKM.APPLICATION.Commands.Cotizacion.AceptarCotizacion
 
         public async Task<ResponseModel> Handle(AceptarCotizacionCommand request, CancellationToken cancellationToken)
         {
-            return await _cotizacionRepository.AceptarCotizacion(request.IdCotizacion);
+            ProyectoModel model = new ProyectoModel();
+            model.RegisterProyecto(nombreProyecto: request.Nombre, descripcion: request.Descripcion);
+
+            return await _cotizacionRepository.AceptarCotizacion(request.IdCotizacion, model);
         }
     }
 }

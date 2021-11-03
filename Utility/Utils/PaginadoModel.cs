@@ -15,4 +15,9 @@ namespace JKM.UTILITY.Utils
         public decimal TotalRows { get; set; }
         public decimal TotalPages { get; set; }
     }
+
+    public class DataOnlyResponse<T>
+    {
+        public IEnumerable<T> Data { get; set; }
+    }
 }
