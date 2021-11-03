@@ -6,7 +6,6 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
     public class ProyectoModel
     {
         public int IdProyecto { get; set; }
-        public int IdCotizacion { get; set; }
         public string NombreProyecto { get; set; }
         public string Descripcion { get; set; }
         public DateTime? FechaInicio { get; set; }

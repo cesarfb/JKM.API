@@ -49,9 +49,9 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 
                     //Insert Proyecto
                     string insert = $@"INSERT INTO Proyecto 
-                                        (nombre,descripcion, idEstado, idCotizacion)
+                                        (nombre,descripcion, idEstado)
 		                                VALUES
-		                                (@NombreProyecto,@Descripcion, 1, @IdCotizacion);";
+		                                (@NombreProyecto,@Descripcion, 1);";
 
                     int hasInsert = await connection.ExecuteAsync(insert, proyectoModel);
 
