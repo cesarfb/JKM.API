@@ -32,8 +32,22 @@ namespace JKM.APPLICATION.Aggregates
                 };
             }
         }
+
+        public Identifier tipoCotizacion
+        {
+            get
+            {
+                return new Identifier
+                {
+                    id = idTipoCotizacion,
+                    descripcion = descripcionTipoCotizacion
+                };
+            }
+        }
         private int idEstado { get; set; }
         private string descripcionEstado { get; set; }
+        private int idTipoCotizacion { get; set; }
+        private string descripcionTipoCotizacion { get; set; }
         public double precioCotizacion { get; set; }
         public bool canCotizar { get; set; }
         public bool canDelete { get; set; }
@@ -98,6 +112,17 @@ namespace JKM.APPLICATION.Aggregates
         public int idCotizacion { get; set; }
         public int idTipoTrabajador { get; set; }
         public string descripcion { get; set; }
+        public int cantidad { get; set; }
+        public decimal precio { get; set; }
+    }
+
+    public class DetalleOrdenModel
+    {
+        public int idDetalleOrden { get; set; }
+        public int idCotizacion { get; set; }
+        public int idProducto { get; set; }
+        public string codigoProducto { get; set; }
+        public string nombreProducto { get; set; }
         public int cantidad { get; set; }
         public decimal precio { get; set; }
     }

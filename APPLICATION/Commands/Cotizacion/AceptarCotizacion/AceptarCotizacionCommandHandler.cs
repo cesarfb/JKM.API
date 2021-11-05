@@ -18,10 +18,7 @@ namespace JKM.APPLICATION.Commands.Cotizacion.AceptarCotizacion
 
         public async Task<ResponseModel> Handle(AceptarCotizacionCommand request, CancellationToken cancellationToken)
         {
-            ProyectoModel model = new ProyectoModel();
-            model.RegisterProyecto(nombreProyecto: request.Nombre, descripcion: request.Descripcion);
-
-            return await _cotizacionRepository.AceptarCotizacion(request.IdCotizacion, model);
+            return await _cotizacionRepository.AceptarCotizacion(request.IdCotizacion);
         }
     }
 }

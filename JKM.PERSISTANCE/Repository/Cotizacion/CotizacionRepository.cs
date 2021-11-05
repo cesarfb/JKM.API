@@ -18,7 +18,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
             _conexion = conexion;
         }
 
-        public async Task<ResponseModel> AceptarCotizacion(int idCotizacion, ProyectoModel proyectoModel)
+        public async Task<ResponseModel> AceptarCotizacion(int idCotizacion)
         {
             string sql = $@"SELECT COUNT(1) 
 						    FROM Cotizacion 
@@ -41,19 +41,19 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     string update = $@"UPDATE Cotizacion
 		                                   SET idEstado = 2
 		                                   WHERE idCotizacion = {idCotizacion};";
-                    
+
                     int hasUpdate = await connection.ExecuteAsync(update);
 
                     if (hasUpdate <= 0)
                         Handlers.ExceptionClose(connection, "Error al actualizar la cotización");
 
-                    //Insert Proyecto
-                    string insert = $@"INSERT INTO Proyecto 
-                                        (nombre,descripcion, idEstado)
-		                                VALUES
-		                                (@NombreProyecto,@Descripcion, 1);";
+                    //Insert Venta
+                    string insert = $@"INSERT INTO Venta 
+                                        (idCotizacion,precio,fechaRegistro, idEstado, idTipo)
+		                                SELECT idCotizacion, precioCotizacion, GETDATE(), 1, 1  FROM Cotizacion 
+                                        WHERE idCotizacion=@IdCotizacion";
 
-                    int hasInsert = await connection.ExecuteAsync(insert, proyectoModel);
+                    int hasInsert = await connection.ExecuteAsync(insert, new { IdCotizacion = idCotizacion });
 
                     if (hasInsert <= 0)
                         Handlers.ExceptionClose(connection, "Ocurrió un error al insertar el proyecto");
@@ -116,7 +116,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     string insert = $@"INSERT INTO Cotizacion 
                                         (solicitante,descripcion,fechaSolicitud,email,idCliente,idEstado, precioCotizacion, idTipoCotizacion)
 		                                VALUES
-		                                (@Solicitante,@Descripcion,@FechaSolicitud,@Email,@IdCliente,1, @PrecioCotizacion, 1);
+		                                (@Solicitante,@Descripcion,@FechaSolicitud,@Email,@IdCliente,1, @PrecioCotizacion, @IdTipoCotizacion);
                                         
                                         SELECT ISNULL(@@IDENTITY,-1);";
 
@@ -154,7 +154,8 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 				                                    fechaSolicitud = @FechaSolicitud,
 				                                    email = @Email,
 				                                    idCliente = @IdCliente,
-                                                    precioCotizacion = @PrecioCotizacion
+                                                    precioCotizacion = @PrecioCotizacion,
+                                                    idTipoCotizacion = @IdTipoCotizacion
 			                                    WHERE idCotizacion = @IdCotizacion;";
 
                     int hasUpdate = await connection.ExecuteAsync(update, cotizacionModel);
@@ -183,6 +184,11 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                       FROM TipoTrabajador
                       WHERE idTipoTrabajador = {trabajadorModel.IdTipoTrabajador};";
 
+            sql += $@"SELECT COUNT(1)
+                      FROM TipoTrabajadorCotizacion
+                      WHERE idTipoTrabajador = {trabajadorModel.IdTipoTrabajador}
+                       AND idCotizacion = {trabajadorModel.IdCotizacion};";
+
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
@@ -194,12 +200,16 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     {
                         int existCot = multi.ReadFirst<int>();
                         int existTipo = multi.ReadFirst<int>();
+                        int repetido = multi.ReadFirst<int>();
 
                         if (existCot <= 0)
                             Handlers.ExceptionClose(connection, "No se encontró la cotización solicitada");
 
                         if (existTipo <= 0)
                             Handlers.ExceptionClose(connection, "No se encontró el tipo de trabajador");
+
+                        if (repetido >= 1)
+                            Handlers.ExceptionClose(connection, "El tipo trabajador indicado ya existe en la cotización actual");
                     }
 
                     string insert = $@"INSERT INTO TipoTrabajadorCotizacion
@@ -466,6 +476,132 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                         Handlers.ExceptionClose(connection, "Ocurrió un error al eliminar la actividad");
 
                     return Handlers.CloseConnection(connection, trans, "Se eliminó el tipo de trabajador");
+                }
+                catch (SqlException err)
+                {
+                    throw err;
+                }
+            }
+        }
+
+        public async Task<ResponseModel> RegisterDetalleOrdenCotizacion(DetalleOrdenCotizacionModel detalleOrdenModel)
+        {
+            string sql = $@"SELECT COUNT(1) 
+							FROM Cotizacion 
+							WHERE idCotizacion = {detalleOrdenModel.IdCotizacion};";
+            sql += $@"SELECT COUNT(1)
+                      FROM Producto
+                      WHERE idProducto= {detalleOrdenModel.IdProducto};";
+            sql += $@"SELECT COUNT(1)
+                      FROM DetalleOrden
+                      WHERE idProducto= {detalleOrdenModel.IdProducto} AND idCotizacion = {detalleOrdenModel.IdCotizacion};";
+
+
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (IDbConnection connection = _conexion)
+            {
+                try
+                {
+                    connection.Open();
+
+                    using (GridReader multi = await connection.QueryMultipleAsync(sql))
+                    {
+                        int existCot = multi.ReadFirst<int>();
+                        int existTipo = multi.ReadFirst<int>();
+                        int repetido = multi.ReadFirst<int>();
+
+                        if (existCot <= 0)
+                            Handlers.ExceptionClose(connection, "No se encontró la cotización solicitada");
+
+                        if (existTipo <= 0)
+                            Handlers.ExceptionClose(connection, "No se encontró el producto");
+
+                        if (repetido >= 1)
+                            Handlers.ExceptionClose(connection, "El producto indicado ya existe en la cotización actual");
+                    }
+
+                    string insert = $@"INSERT INTO DetalleOrden
+		                                       (idCotizacion, idProducto, precio, cantidad, idTipoDetalleOrden)
+		                                       VALUES
+		                                       (@IdCotizacion, @IdProducto, @Precio, @Cantidad, 1);";
+
+                    int hasInsert = await connection.ExecuteAsync(insert, detalleOrdenModel);
+
+                    if (hasInsert <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al insertar el producto");
+
+                    return Handlers.CloseConnection(connection, trans, "Registro exitoso");
+                }
+                catch (SqlException err)
+                {
+                    throw err;
+                }
+            }
+        }
+
+        public async Task<ResponseModel> UpdateDetalleOrdenCotizacion(DetalleOrdenCotizacionModel detalleOrdenModel)
+        {
+            string sql = $@"SELECT COUNT(1) 
+					  FROM DetalleOrden
+				      WHERE idDetalleOrden = {detalleOrdenModel.IdDetalleOrden};";
+
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (IDbConnection connection = _conexion)
+            {
+                try
+                {
+                    connection.Open();
+
+                    using (GridReader multi = await connection.QueryMultipleAsync(sql))
+                    {
+                        int existDet = multi.ReadFirst<int>();
+
+                        if (existDet <= 0)
+                            Handlers.ExceptionClose(connection, "No se encontró el detalle orden solicitada");
+
+                    }
+
+                    string update = $@"UPDATE DetalleOrden
+		                                        SET precio = @Precio, 
+			                                        cantidad = @Cantidad
+		                                        WHERE idCotizacion = @IdCotizacion
+                                                    AND idDetalleOrden = @IdDetalleOrden;";
+
+                    int hasUpdate = await connection.ExecuteAsync(update, detalleOrdenModel);
+
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Error al actualizar");
+
+                    return Handlers.CloseConnection(connection, trans, "Actualizacion exitosa");
+                }
+                catch (SqlException err)
+                {
+                    throw err;
+                }
+            }
+
+        }
+
+        public async Task<ResponseModel> DeleteDetalleOrdenCotizacion(int idCotizacion, int idDetalleOrden)
+        {
+
+            using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (IDbConnection connection = _conexion)
+            {
+                try
+                {
+                    connection.Open();
+
+                    string delete = $@"DELETE FROM DetalleOrden
+		                                   WHERE idCotizacion = {idCotizacion}
+                                                AND idDetalleOrden = {idDetalleOrden};";
+
+                    int hasUpdate = await connection.ExecuteAsync(delete);
+
+                    if (hasUpdate <= 0)
+                        Handlers.ExceptionClose(connection, "Ocurrió un error al eliminar el detalle orden");
+
+                    return Handlers.CloseConnection(connection, trans, "Se eliminó el detalle orden");
                 }
                 catch (SqlException err)
                 {

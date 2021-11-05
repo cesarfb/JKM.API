@@ -43,7 +43,7 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
                         FROM Cotizacion C 
                         INNER JOIN EstadoCotizacion EC  ON (C.idEstado = EC.idEstado)
                         INNER JOIN Cliente CLI ON CLI.idCliente=C.idCliente
-	                    ORDER BY C.fechaSolicitud DESC;";
+	                    ORDER BY canEdit desc, C.fechaSolicitud DESC;";
 
             using (IDbConnection connection = _conexion)
             {
