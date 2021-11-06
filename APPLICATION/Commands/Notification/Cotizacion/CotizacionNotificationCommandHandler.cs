@@ -22,7 +22,7 @@ namespace JKM.APPLICATION.Commands.Notification.Cotizacion
             {
                 mail.To.Add(request.EmailAddress);
                 mail.Subject = "Solicitud de Cotizacion";
-                mail.AlternateViews.Add(Templates.CotizaciontUsHtml(request));
+                mail.Body = Templates.CotizaciontUsHtml(request);
                 using (SmtpClient smtp = _smtp)
                 {
                     await smtp.SendMailAsync(mail);
