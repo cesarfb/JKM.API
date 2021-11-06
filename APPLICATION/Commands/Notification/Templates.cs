@@ -1,4 +1,5 @@
-﻿using JKM.APPLICATION.Commands.Notification.ContactUs;
+﻿using JKM.API.Reports;
+using JKM.APPLICATION.Commands.Notification.ContactUs;
 using System;
 using System.IO;
 //using TheArtOfDev.HtmlRenderer.PdfSharp;
@@ -7,7 +8,20 @@ namespace JKM.APPLICATION.Utils
 {
     public static class Templates
     {
-        public static string ContactUsHtml(ContactUsNotificationCommand model)
+        public static string prueba(ContactUsNotificationCommand model)
+        {
+            string html = ReadPhysicalFile(model.Path)
+            .Replace("{LOGO}", Assets.Logo)
+            .Replace("{EMPRESA}", model.Empresa)
+            .Replace("{EMAIL}", model.EmailAddress)
+            .Replace("{NOMBRE}", model.Nombre)
+            .Replace("{TELEFONO}", model.Telefono.ToString())
+            .Replace("{MENSAJE}", model.Mensaje);
+
+
+            return html;
+        }
+        public static AlternateView ContactUsHtml(ContactUsNotificationCommand model)
         {
             string emailMessage = ReadPhysicalFile(model.Path)
             .Replace("{LOGO}", model.Logo)

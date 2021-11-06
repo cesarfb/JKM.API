@@ -18,6 +18,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text;
@@ -38,6 +39,12 @@ namespace JKM.API
         {
             Assembly application = AppDomain.CurrentDomain.Load("JKM.APPLICATION");
             Assembly persistence = AppDomain.CurrentDomain.Load("JKM.PERSISTENCE");
+
+            services.AddHttpClient("HttpClientName").ConfigurePrimaryHttpMessageHandler(() => {
+                var handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                return handler;
+            });
 
             //MIDDLEWARE FLUENT VALIDATION
             services.AddControllers()
@@ -138,14 +145,12 @@ namespace JKM.API
                 Port = smtpModel.Port,
                 Credentials = new NetworkCredential(smtpModel.Username, smtpModel.Password),
                 EnableSsl = true,
-
-            }
-            ).AddTransient((serviceProvider) => new MailMessage()
+            })
+            .AddTransient((serviceProvider) => new MailMessage()
             {
                 From = new MailAddress(smtpModel.From, smtpModel.DisplayName),
                 IsBodyHtml = true
-            }
-            );
+            });
 
             //MEDIATR
             services.AddMediatR(application);

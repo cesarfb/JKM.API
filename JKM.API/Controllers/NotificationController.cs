@@ -29,8 +29,18 @@ namespace JKM.API.Controllers
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> ContactUs([FromBody] ContactUsNotificationCommand request)
         {
-            request.Path = Path.GetFullPath(Path.Combine(_env.ContentRootPath, "Reports/Templates/ContactUsHtml.html"));
-            request.Logo = Path.GetFullPath(Path.Combine(_env.ContentRootPath, "Reports/Assets/JKMLOGO.png"));
+            request.Path = "Reports/Templates/ContactUsHtml.html";
+            await _mediator.Publish(request);
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost(template: "Cotizacion")]
+        [SwaggerOperation("Envia un correo de notificacion de una cotizacion")]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> Cotizacion([FromBody] CotizacionNotificationCommand request)
+        {
+            request.Path = "Reports/Templates/CotizacionHtml.html";
             await _mediator.Publish(request);
             return Ok();
         }
