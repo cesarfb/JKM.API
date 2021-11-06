@@ -16,6 +16,7 @@ namespace JKM.APPLICATION.Commands.Cotizacion.UpdateCotizacion
         public string Email { get; set; }
         public int IdCliente { get; set; }
         public double PrecioCotizacion { get; set; }
+        public int IdTipoCotizacion { get; set; }
     }
 
     public class Validator : AbstractValidator<UpdateCotizacionCommand>

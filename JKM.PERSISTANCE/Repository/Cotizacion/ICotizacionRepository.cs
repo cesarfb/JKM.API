@@ -1,4 +1,5 @@
-﻿using JKM.UTILITY.Utils;
+﻿using JKM.PERSISTENCE.Repository.Proyecto;
+using JKM.UTILITY.Utils;
 using System.Threading.Tasks;
 
 namespace JKM.PERSISTENCE.Repository.Cotizacion
@@ -15,5 +16,8 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
         Task<ResponseModel> RegisterActividadCotizacion(ActividadCotizacionModel actividadModel);
         Task<ResponseModel> UpdateActividadCotizacion(ActividadCotizacionModel actividadModel);
         Task<ResponseModel> DeleteActividadCotizacion(int idCotizacion, int idActividad);
+        Task<ResponseModel> RegisterDetalleOrdenCotizacion(DetalleOrdenCotizacionModel detalleOrdenModel);
+        Task<ResponseModel> UpdateDetalleOrdenCotizacion(DetalleOrdenCotizacionModel detalleOrdenModel);
+        Task<ResponseModel> DeleteDetalleOrdenCotizacion(int idCotizacion, int idDetalleOrden);
     }
 }

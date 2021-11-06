@@ -31,14 +31,14 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetTrabajadoresByCotizacion
                 try
                 {
                     connection.Open();
-                    IEnumerable<TipoTrabajadorModel> cotizacion =
+                    IEnumerable<TipoTrabajadorModel> trabajadores =
                         await connection.QueryAsync<TipoTrabajadorModel>(sql);
 
                     connection.Close();
 
-                    if (cotizacion.AsList().Count == 0) throw new ArgumentNullException();
+                    if (trabajadores.AsList().Count == 0) throw new ArgumentNullException();
 
-                    return cotizacion;
+                    return trabajadores;
                 }
                 catch (SqlException err)
                 {

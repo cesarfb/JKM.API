@@ -19,7 +19,7 @@ namespace JKM.APPLICATION.Commands.Cotizacion.UpdateActividadCotizacion
         {
             ActividadCotizacionModel model = new ActividadCotizacionModel();
             model.UpdateActividad(descripcion: request.Descripcion, peso: request.Peso,
-                idPadre: request.IdPadre, idHermano: request.IdHermano, idActividad: request.IdActividad);
+                idPadre: request.IdPadre, idHermano: request.IdHermano, idActividad: request.IdActividad, idCotizacion: request.IdCotizacion);
 
             return await _cotizacionRepository.UpdateActividadCotizacion(model);
         }

@@ -3,14 +3,14 @@ using JKM.APPLICATION.Aggregates;
 using MediatR;
 using System.Collections.Generic;
 
-namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
+namespace JKM.APPLICATION.Queries.Cotizacion.GetDetalleOrdenByCotizacion
 {
-    public class GetActividadesByCotizacionQuery : IRequest<IEnumerable<ActividadCotizancionTreeNode>>
+    public class GetDetalleOrdenByCotizacionQuery : IRequest<IEnumerable<DetalleOrdenModel>>
     {
         public int IdCotizacion { get; set; }
     }
 
-    public class Validator : AbstractValidator<GetActividadesByCotizacionQuery>
+    public class Validator : AbstractValidator<GetDetalleOrdenByCotizacionQuery>
     {
         public Validator()
         {

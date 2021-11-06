@@ -19,7 +19,8 @@ namespace JKM.APPLICATION.Commands.Cotizacion.UpdateCotizacion
         {
             CotizacionModel cotizacion = new CotizacionModel();
             cotizacion.UpdateCotizacion(solicitante: request.Solicitante, fechaSolicitud: request.FechaSolicitud, descripcion: request.Descripcion,
-                email: request.Email, idCliente: request.IdCliente, idCotizacion: request.IdCotizacion, request.PrecioCotizacion);
+                email: request.Email, idCliente: request.IdCliente, idCotizacion: request.IdCotizacion, request.PrecioCotizacion,
+                idTipoCotizacion: request.IdTipoCotizacion);
 
             return await _cotizacionRepository.UpdateCotizacion(cotizacion);
         }

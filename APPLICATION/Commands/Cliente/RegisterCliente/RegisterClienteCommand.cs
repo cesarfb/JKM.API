@@ -16,7 +16,8 @@ namespace JKM.APPLICATION.Commands.Cliente.RegisterCliente
         public Validator()
         {
             RuleFor(x => x.RUC)
-                .NotEmpty().WithMessage("El RUC no puede ser vacio");
+                .NotEmpty().WithMessage("El RUC no puede ser vacio")
+                .Length(11).WithMessage("El RUC debe tener 11 caractéres");
             RuleFor(x => x.RazonSocial)
                 .NotEmpty().WithMessage("La razon social no puede ser vacio");
             RuleFor(x => x.Telefono)
