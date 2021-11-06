@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
 {
-    public class GetActividadesByCotizacionQuery : IRequest<IEnumerable<ActividadCotizacionModel>>
+    public class GetActividadesByCotizacionQuery : IRequest<IEnumerable<ActividadCotizancionTreeNode>>
     {
         public int IdCotizacion { get; set; }
     }

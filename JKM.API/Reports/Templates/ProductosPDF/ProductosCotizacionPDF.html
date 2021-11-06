@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang='es'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+    <style>
+        @import url('http://fonts.cdnfonts.com/css/roboto');
+
+        * {
+            font-family: Roboto;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            color: black !important;
+        }
+
+        .container {
+            padding: 20px;
+            text-align: right;
+        }
+
+            .container table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .container thead {
+                background-color: #5046b3;
+            }
+
+            .container td, .container th {
+                padding: 10px;
+                text-align: left;
+            }
+
+            .container tr {
+                border: 1px solid #5046b3;
+            }
+
+        .titulo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img width="135"
+             src='{LOGO}' />
+        <h2 class="titulo">Listado de Productos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th> ORDER N°{ORDER} </th>
+                    <th style="text-align: right">FECHA {DATE}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        EMPRESA: {EMPRESA}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        SOLICITANTE: {SOLICITANTE}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        PRECIO TOTAL: {PRECIOTOTAL}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <table>
+            <thead>
+                <tr>
+                    <th> Product Id </th>
+                    <th> Nombre del producto </th>
+                    <th> SKU </th>
+                    <th> Cantidad </th>
+                    <th> Precio Unitario </th>
+                    <th> Precio Total </th>
+                </tr>
+            </thead>
+            <tbody>
+                {PRODUCTOS}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

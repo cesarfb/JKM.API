@@ -52,6 +52,7 @@ namespace JKM.API
                 //AGREGAMOS LA LIBRERIA PARA PODER PARSEAR LOS ERRORES EN EL BADREQUEST @3.1.2
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
             //ADD JWT
@@ -126,7 +127,7 @@ namespace JKM.API
 
             //INIT DATABASE CONN
             string cnn = Configuration.GetSection("ConnectionStrings").GetValue<string>("DB_JKM");
-            services.AddScoped<IDbConnection>(x => new SqlConnection(cnn));
+            services.AddTransient<IDbConnection>(x => new SqlConnection(cnn));
 
             //INIT SMTP EMAILS
             services.Configure<SmtpModel>(Configuration.GetSection("Smtp"));
@@ -139,17 +140,15 @@ namespace JKM.API
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(smtpModel.Username, smtpModel.Password),
                 EnableSsl = true,
-            }
-            ).AddTransient((serviceProvider) => new MailMessage()
+            }).AddTransient((serviceProvider) => new MailMessage()
             {
                 From = new MailAddress(smtpModel.From, smtpModel.DisplayName),
                 IsBodyHtml = true
-            }
-            );
+            });
 
             //MEDIATR
             services.AddMediatR(application);
-
+            services.AddMvc().AddControllersAsServices();
             //INYECCIONES DE REPOSITORY
             List<Type> repositories = persistence.GetTypes()
                 .Where(g => g.Name.IndexOf("Repo") >= 0)

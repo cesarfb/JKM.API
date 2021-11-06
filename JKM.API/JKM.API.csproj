@@ -20,5 +20,9 @@
     <ProjectReference Include="..\APPLICATION\JKM.APPLICATION.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Reports\Files\" />
+  </ItemGroup>
+
 
 </Project>

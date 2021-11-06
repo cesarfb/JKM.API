@@ -22,10 +22,11 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionById
             string sql = $@"SELECT C.idCotizacion, C.solicitante, C.descripcion, C.fechaSolicitud,
 	                            C.descripcion, C.email, CLI.idCliente, CLI.razonSocial,
 	                            EC.idEstado, EC.descripcion as 'descripcionEstado',
-	                            C.precioCotizacion
+	                            C.precioCotizacion, TIPO.idTipoCotizacion, TIPO.descripcion as 'descripcionTipoCotizacion'
                             FROM Cotizacion C 
                             INNER JOIN EstadoCotizacion EC  ON(C.idEstado = EC.idEstado)
                             INNER JOIN Cliente CLI on(CLI.idCliente = C.idCliente)
+                            INNER JOIN TipoCotizacion TIPO on(TIPO.idTipoCotizacion=C.idTipoCotizacion)
 		                    WHERE C.idCotizacion = {request.IdCotizacion}";
 
             using (IDbConnection connection = _conexion)

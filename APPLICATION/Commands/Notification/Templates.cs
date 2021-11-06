@@ -1,120 +1,67 @@
-﻿using JKM.APPLICATION.Commands.Notification.ContactUs;
-using JKM.APPLICATION.Commands.Notification.Cotizacion;
+﻿using JKM.API.Reports;
+using JKM.APPLICATION.Aggregates;
+using JKM.APPLICATION.Commands.Notification.ContactUs;
+using PdfSharp;
+using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Mail;
-using System.Net.Mime;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace JKM.APPLICATION.Utils
 {
     public static class Templates
     {
-        public static AlternateView ContactUsHtml(ContactUsNotificationCommand model)
+        public static string ContactUsHtml(ContactUsNotificationCommand model)
         {
-            LinkedResource resource = CreateResource(model.Logo);
-            string html = ReadPhysicalFile(model.Path)
-            .Replace("{LOGO}", resource.ContentId)
+            return ReadPhysicalFile(Assets.ContactUsHtml)
+            .Replace("{LOGO}", Assets.Logo)
             .Replace("{EMPRESA}", model.Empresa)
             .Replace("{EMAIL}", model.EmailAddress)
             .Replace("{NOMBRE}", model.Nombre)
             .Replace("{TELEFONO}", model.Telefono.ToString())
             .Replace("{MENSAJE}", model.Mensaje);
-
-            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html);
-
-            alternateView.LinkedResources.Add(resource);
-
-            return alternateView;
         }
 
-        public static AlternateView CotizaciontUsHtml(CotizacionNotificationCommand model)
+        public static string CotizacionHtml(CotizacionModel cotizacion, IEnumerable<TipoTrabajadorModel> trabajadores)
         {
-            LinkedResource resource = CreateResource(model.Logo);
-           
-            string html = ReadPhysicalFile(model.Path)
-            .Replace("{LOGO}", resource.ContentId)
-            .Replace("{EMPRESA}", model.Empresa)
-            .Replace("{EMAIL}", model.EmailAddress)
-            .Replace("{NOMBRE}", model.Nombre)
-            .Replace("{TELEFONO}", model.Telefono.ToString())
-            .Replace("{MENSAJE}", model.Mensaje)
-            .Replace("{PRODUCTOS}", AddProduct(model.Productos))
-            .Replace("{SERVICIOS}", AddService(model.Servicios));
-
-            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html);
-
-            alternateView.LinkedResources.Add(resource);
-
-            return alternateView;
+            return ReadPhysicalFile(Assets.CotizacionHtml)
+            .Replace("{LOGO}", Assets.Logo);
+            //.Replace("{PRODUCTOS}, )
         }
 
-        private static string AddProduct(List<ProductoCotizacionModel> products)
+        public static void ProductosCotizacionPDF(CotizacionModel empresa,List<DetalleOrdenModel> productos, string nameFile)
+        {
+            string html = ReadPhysicalFile(Assets.TemplateProductosCotizacionPDF)
+            .Replace("{LOGO}", Assets.Logo)
+            .Replace("{ORDER}", empresa.idCotizacion.ToString())
+            .Replace("{DATE}", DateTime.Now.ToString("dd/MM/yyyy"))
+            .Replace("{EMPRESA}", empresa.razonSocial)
+            .Replace("{SOLICITANTE}", empresa.solicitante)
+            .Replace("{PRECIOTOTAL}", empresa.precioCotizacion.ToString())
+            .Replace("{PRODUCTOS}", AddProduct(productos));
+
+            HtmlToPdf(html, nameFile);
+        }
+
+        private static string AddProduct(List<DetalleOrdenModel> products)
         {
             if (products.Count == 0) return "";
-            string productHtml = $@"<tr>
-                                        <td>
-                                            <h2> Productos </h2>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class='center-text tittle'>
-                                            <table class='center-table formulario'>
-                                                <thead>
-                                                    <td>SKU</td>
-                                                    <td>NOMBRE</td>
-                                                    <td>CANTIDAD</td>
-                                                    <td>PRECIO U</td>
-                                                    <td>PRECIO T</td>
-                                                </thead>
-                                                <tbody>";
-                                             
+
+            string productHtml = "";
+
             products.ForEach(prod =>
             {
                 productHtml += $@" <tr>
-                                       <td>{prod.Codigo}</td>
-                                       <td>{prod.Nombre}</td>
-                                       <td>{prod.Cantidad}</td>
-                                       <td>S/ {prod.Precio}</td>
-                                       <td>S/ {prod.Precio * prod.Cantidad}</td>
-                                   </tr>";
+                                        <td> {prod.idProducto} </td>
+                                        <td> {prod.nombreProducto} </td>
+                                        <td> {prod.codigoProducto} </td>
+                                        <td> {prod.cantidad} u</td>
+                                        <td> S/ {prod.precio} </td>
+                                        <td> S/ {prod.precio * prod.cantidad} </td>
+                                    </tr>";
             });
-            productHtml += @"</tbody>
-                             </table>
-                             </td>
-                             </tr>";
             return productHtml;
-        }
-
-        private static string AddService(List<ServicioCotizacionModel> services)
-        {
-            if (services.Count == 0) return "";
-            string serviceHtml = $@"<tr>
-                                        <td>
-                                            <h2> Servicios </h2>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class='center-text tittle'>
-                                            <table class='center-table formulario'>
-                                                <thead>
-                                                    <td>NOMBRE</td>
-                                                    <td>DESCRIPCION</td>
-                                                </thead>
-                                                <tbody>";
-
-            services.ForEach(serv =>
-            {
-                serviceHtml += $@" <tr>
-                                       <td>{serv.Nombre}</td>
-                                       <td>{serv.Descripcion}</td>
-                                   </tr>";
-            });
-            serviceHtml += @"</tbody>
-                             </table>
-                             </td>
-                             </tr>";
-            return serviceHtml;
         }
 
         private static string ReadPhysicalFile(string path)
@@ -133,11 +80,11 @@ namespace JKM.APPLICATION.Utils
             }
         }
 
-        private static LinkedResource CreateResource(string path)
+        private static void HtmlToPdf(string html, string nameFile)
         {
-            LinkedResource res = new LinkedResource(path);
-            res.ContentId = Guid.NewGuid().ToString();
-            return res;
+            PdfDocument pdfDocument = PdfGenerator.GeneratePdf(html, PageSize.A3, margin: 40);
+            pdfDocument.Save($"Reports/Files/{nameFile}");
         }
+
     }
 }
