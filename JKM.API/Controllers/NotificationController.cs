@@ -16,12 +16,10 @@ namespace JKM.API.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IWebHostEnvironment _env;
 
-        public NotificationController(IMediator mediator, IWebHostEnvironment env)
+        public NotificationController(IMediator mediator)
         {
             _mediator = mediator;
-            _env = env;
         }
 
         [AllowAnonymous]
@@ -42,7 +40,6 @@ namespace JKM.API.Controllers
         public async Task<IActionResult> Cotizacion([FromBody] CotizacionNotificationCommand request)
         {
             request.Path = "Reports/Templates/CotizacionHtml.html";
-            request.Logo = "Reports/Assets/JKMLOGO.png";
             await _mediator.Publish(request);
             return Ok();
         }

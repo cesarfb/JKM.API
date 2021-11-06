@@ -52,6 +52,7 @@ namespace JKM.API
                 //AGREGAMOS LA LIBRERIA PARA PODER PARSEAR LOS ERRORES EN EL BADREQUEST @3.1.2
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             ValidatorOptions.Global.CascadeMode = CascadeMode.Stop;
 
             //ADD JWT
@@ -139,13 +140,11 @@ namespace JKM.API
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(smtpModel.Username, smtpModel.Password),
                 EnableSsl = true,
-            }
-            ).AddTransient((serviceProvider) => new MailMessage()
+            }).AddTransient((serviceProvider) => new MailMessage()
             {
                 From = new MailAddress(smtpModel.From, smtpModel.DisplayName),
                 IsBodyHtml = true
-            }
-            );
+            });
 
             //MEDIATR
             services.AddMediatR(application);

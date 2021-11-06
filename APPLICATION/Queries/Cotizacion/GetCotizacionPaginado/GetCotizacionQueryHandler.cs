@@ -53,13 +53,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
                     IEnumerable<CotizacionModel> cotizaciones =
                         await connection.QueryAsync<CotizacionModel>(sql);
 
-                    connection.Open();
-                    using (var multi = await connection.QueryMultipleAsync(sql))
-                    {
-                        newPaginado.TotalRows = multi.ReadFirst<int>();
-                        newPaginado.Data = multi.Read<CotizacionModel>().AsList();
-                        newPaginado.TotalPages = Math.Ceiling(newPaginado.TotalRows / request.Rows);
-                    }
                     connection.Close();
 
                     if (cotizaciones.AsList().Count == 0) throw new ArgumentNullException();

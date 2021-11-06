@@ -23,7 +23,7 @@ namespace JKM.APPLICATION.Commands.Notification.ContactUs
             {
                 mail.To.Add(request.EmailAddress);
                 mail.Subject = "Solicitud de Servicio";
-                mail.AlternateViews.Add(Templates.ContactUsHtml(request));
+                mail.Body = Templates.ContactUsHtml(request);
                 using (SmtpClient smtp = _smtp)
                 {
                     await smtp.SendMailAsync(mail);
