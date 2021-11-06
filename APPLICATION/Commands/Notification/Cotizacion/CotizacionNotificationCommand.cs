@@ -9,8 +9,6 @@ namespace JKM.APPLICATION.Commands.Notification.Cotizacion
     {
         [SwaggerSchema(ReadOnly = true)]
         public string Path { get; set; }
-        [SwaggerSchema(ReadOnly = true)]
-        public string Logo { get; set; }
         public string EmailAddress { get; set; }
         public string Empresa { get; set; }
         public string Nombre { get; set; }

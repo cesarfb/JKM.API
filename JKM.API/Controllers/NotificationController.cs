@@ -31,7 +31,6 @@ namespace JKM.API.Controllers
         public async Task<IActionResult> ContactUs([FromBody] ContactUsNotificationCommand request)
         {
             request.Path = "Reports/Templates/ContactUsHtml.html";
-            request.Logo = "Reports/Assets/JKMLOGO.png";
             await _mediator.Publish(request);
             return Ok();
         }

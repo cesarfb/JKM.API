@@ -1,4 +1,5 @@
-﻿using JKM.APPLICATION.Commands.Notification.ContactUs;
+﻿using JKM.API.Reports;
+using JKM.APPLICATION.Commands.Notification.ContactUs;
 using JKM.APPLICATION.Commands.Notification.Cotizacion;
 using System;
 using System.Collections.Generic;
@@ -10,30 +11,21 @@ namespace JKM.APPLICATION.Utils
 {
     public static class Templates
     {
-        public static AlternateView ContactUsHtml(ContactUsNotificationCommand model)
+        public static string ContactUsHtml(ContactUsNotificationCommand model)
         {
-            LinkedResource resource = CreateResource(model.Logo);
-            string html = ReadPhysicalFile(model.Path)
-            .Replace("{LOGO}", resource.ContentId)
+            return ReadPhysicalFile(model.Path)
+            .Replace("{LOGO}", Assets.Logo)
             .Replace("{EMPRESA}", model.Empresa)
             .Replace("{EMAIL}", model.EmailAddress)
             .Replace("{NOMBRE}", model.Nombre)
             .Replace("{TELEFONO}", model.Telefono.ToString())
             .Replace("{MENSAJE}", model.Mensaje);
-
-            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html);
-
-            alternateView.LinkedResources.Add(resource);
-
-            return alternateView;
         }
 
-        public static AlternateView CotizaciontUsHtml(CotizacionNotificationCommand model)
+        public static string CotizaciontUsHtml(CotizacionNotificationCommand model)
         {
-            LinkedResource resource = CreateResource(model.Logo);
-           
-            string html = ReadPhysicalFile(model.Path)
-            .Replace("{LOGO}", resource.ContentId)
+            return ReadPhysicalFile(model.Path)
+            .Replace("{LOGO}", Assets.Logo)
             .Replace("{EMPRESA}", model.Empresa)
             .Replace("{EMAIL}", model.EmailAddress)
             .Replace("{NOMBRE}", model.Nombre)
@@ -41,12 +33,6 @@ namespace JKM.APPLICATION.Utils
             .Replace("{MENSAJE}", model.Mensaje)
             .Replace("{PRODUCTOS}", AddProduct(model.Productos))
             .Replace("{SERVICIOS}", AddService(model.Servicios));
-
-            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html);
-
-            alternateView.LinkedResources.Add(resource);
-
-            return alternateView;
         }
 
         private static string AddProduct(List<ProductoCotizacionModel> products)
