@@ -113,27 +113,27 @@ namespace JKM.APPLICATION.Utils
                                             </thead>
                                             <tbody>";
                     children.ForEach(child =>
-                   {
-                       actividadesHtml += $@"<tr>
+                    {
+                        actividadesHtml += $@"<tr>
                                             <td style='font-weight: bold;'> {child.data.Descripcion} </td>
                                             <td> {child.data.Prioridad} </td>
                                             <td> {child.data.DescripcionEstado}</td>
                                             <td>";
-                       var subActiv = child.children.ToList();
-                       if(subActiv.Count > 0)
-                       {
-                           actividadesHtml += $@"<ul>";
-                           subActiv.ForEach(sub =>
-                           {
-                               actividadesHtml += $@"<li>{sub.data.Descripcion} ({sub.data.DescripcionEstado})</li>";
-                           });
-                           actividadesHtml += "</ul>";
-                       }
-                       actividadesHtml += $@"</td>
+                        var subActiv = child.children.ToList();
+                        if (subActiv.Count > 0)
+                        {
+                            actividadesHtml += $@"<ul>";
+                            subActiv.ForEach(sub =>
+                            {
+                                actividadesHtml += $@"<li>{sub.data.Descripcion} ({sub.data.DescripcionEstado})</li>";
+                            });
+                            actividadesHtml += "</ul>";
+                        }
+                        actividadesHtml += $@"</td>
                                          </tr>
                                     </tbody>
                                 </table>";
-                   });
+                    });
                 }
             });
             return actividadesHtml;
