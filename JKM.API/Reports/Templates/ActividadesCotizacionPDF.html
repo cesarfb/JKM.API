@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang='es'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+    <style>
+        @import url('http://fonts.cdnfonts.com/css/roboto:400,100,100italic,300,500,500italic,700,700italic,900italic,900');
+
+        * {
+            font-family: Roboto;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            color: black !important;
+        }
+
+        .container {
+            padding: 20px;
+            text-align: right;
+        }
+
+        .container table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #7469e5;
+        }
+
+        .border-row tr {
+            border: 1px solid #7469e5;
+        }
+
+        .container thead {
+            background-color: #7469e5;
+        }
+
+        .container td,
+        .container th {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .titulo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img width="135"
+             src='https://firebasestorage.googleapis.com/v0/b/asdd-86d59.appspot.com/o/JKMLOGO.png?alt=media&token=afc75bdb-566c-4232-a4e2-230ecb455d1b' />
+        <h2 class="titulo">PLAN DE ACTIVIDADES N°{ORDER}</h2>
+        <br />
+        <div style="text-align: left;">
+            {ACTIVIDADES}
+        </div>
+    </div>
+</body>
+
+</html>

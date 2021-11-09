@@ -7,7 +7,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Document</title>
     <style>
-        @import url('http://fonts.cdnfonts.com/css/roboto');
+        @import url('http://fonts.cdnfonts.com/css/roboto:400,100,100italic,300,300ita‌lic,400italic,500,500italic,700,700italic,900italic,900');
 
         * {
             font-family: Roboto;
@@ -22,23 +22,21 @@
             text-align: right;
         }
 
-            .container table {
-                width: 100%;
-                border-collapse: collapse;
-            }
+        .container table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #7469e5;
+            text-align: left;
+        }
 
-            .container thead {
-                background-color: #5046b3;
-            }
+        .container thead {
+            background-color: #7469e5;
+        }
 
-            .container td, .container th {
-                padding: 10px;
-                text-align: left;
-            }
-
-            .container tr {
-                border: 1px solid #5046b3;
-            }
+        .container td, .container th {
+            padding: 10px;
+            text-align: left;
+        }
 
         .titulo {
             text-align: center;
@@ -61,18 +59,13 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>
+                    <td colspan="2">
                         EMPRESA: {EMPRESA}
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td colspan="2">
                         SOLICITANTE: {SOLICITANTE}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        PRECIO TOTAL: {PRECIOTOTAL}
                     </td>
                 </tr>
             </tbody>

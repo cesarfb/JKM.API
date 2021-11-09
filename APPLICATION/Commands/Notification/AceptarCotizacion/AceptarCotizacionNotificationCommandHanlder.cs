@@ -6,6 +6,8 @@ using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
+using System.IO;
 
 namespace JKM.APPLICATION.Commands.Notification.AceptarCotizacion
 {
@@ -27,27 +29,41 @@ namespace JKM.APPLICATION.Commands.Notification.AceptarCotizacion
             IEnumerable<ActividadCotizancionTreeNode> actividades = request.Actividades;
             IEnumerable<DetalleOrdenModel> productos = request.Productos;
 
-            if (productos.ToList().Count > 0)
-            {
-                Templates.ProductosCotizacionPDF(cotizacion, productos.ToList(), "productos.pdf");
-            }
-            if (actividades.ToList().Count > 0)
-            {
+            var ran = new Random();
 
-            }
+            string productPDf = "";
+            string actividadesPdf = "";
 
             using (MailMessage mail = _mail)
             {
+                if (productos.ToList().Count > 0)
+                {
+                    productPDf = "producto-N°" + ran.Next(1, 100000000);
+                    Templates.ProductosCotizacionPDF(cotizacion, productos.ToList(), productPDf);
+                    mail.Attachments.Add(new Attachment($@"Reports/Files/{productPDf}.pdf"));
+                }
+                if (actividades.ToList().Count > 0)
+                {
+                    actividadesPdf = "actividades-N°" + ran.Next(1, 100000000);
+                    Templates.ActividadesCotizacionPDF(cotizacion, actividades.ToList(), actividadesPdf);
+                    mail.Attachments.Add(new Attachment($@"Reports/Files/{actividadesPdf}.pdf"));
+                }
+
                 mail.To.Add(cotizacion.email);
                 mail.Subject = "Solicitud de Servicio";
                 mail.Body = Templates.CotizacionHtml(cotizacion, trabajadores);
-
 
                 using (SmtpClient smtp = _smtp)
                 {
                     await smtp.SendMailAsync(mail);
                 }
             }
+
+            if (String.IsNullOrEmpty(productPDf))
+                File.Delete($@"Reports/Files/{productPDf}.pdf");
+
+            if (String.IsNullOrEmpty(actividadesPdf))
+                    File.Delete($@"Reports/Files/{actividadesPdf}.pdf");
         }
     }
 }
