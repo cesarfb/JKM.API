@@ -19,7 +19,7 @@ namespace JKM.APPLICATION.Queries.Almacen.GetAlmacen
         }
         public async Task<IEnumerable<AlmacenModel>> Handle(GetAlmacenQuery request, CancellationToken cancellationToken)
         {
-            string sql = $@"SELECT idAlmacen, nombre, direccion
+            string sql = $@"SELECT idAlmacen, nombre, direccion, distrito
                             FROM Almacen";
 
             using (IDbConnection connection = _conexion)
