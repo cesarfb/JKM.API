@@ -1,4 +1,6 @@
-﻿using JKM.APPLICATION.Queries.Almacen.GetAlmacen;
+﻿using JKM.APPLICATION.Commands.Almacen.RegisterAlmacen;
+using JKM.APPLICATION.Commands.Almacen.UpdateAlmacen;
+using JKM.APPLICATION.Queries.Almacen.GetAlmacen;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +25,24 @@ namespace JKM.API.Controllers
 
         [HttpGet]
         [SwaggerOperation("Retorna los almacenes por página")]
-        //[SwaggerResponse(200, "Retorna los clientes", typeof(PaginadoResponse<ClienteModel>))]
-        //[SwaggerResponse(204, "No se encontraron clientes")]
-        //[SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetAlmacenPaginado()
         {
             return Ok(await _mediator.Send(new GetAlmacenQuery()));
+        }
+
+        [HttpPost]
+        [SwaggerOperation("Registra un nuevo almacen")]
+        public async Task<IActionResult> RegisterAlmacen(RegisterAlmacenCommand request)
+        {
+            return Ok(await _mediator.Send(request));
+        }
+
+        [HttpPut(template: "{idAlmacen}")]
+        [SwaggerOperation("Actualiza un almacen en base a su ID")]
+        public async Task<IActionResult> UpdateAlmacen(int idAlmacen, [FromBody] UpdateAlmacenCommand request)
+        {
+            request.IdAlmacen = idAlmacen;
+            return Ok(await _mediator.Send(request));
         }
     }
 }

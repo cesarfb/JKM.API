@@ -12,6 +12,7 @@ using JKM.APPLICATION.Queries.Cotizacion.GetTrabajadoresByCotizacion;
 using JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion;
 using JKM.APPLICATION.Queries.Cotizacion.GetDetalleOrdenByCotizacion;
 using JKM.APPLICATION.Commands.Notification.AceptarCotizacion;
+using JKM.APPLICATION.Commands.Notification.RecuperarUsuario;
 
 namespace JKM.API.Controllers
 {
@@ -21,12 +22,10 @@ namespace JKM.API.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private CotizacionController _cotizacionController;
 
-        public NotificationController(IMediator mediator, CotizacionController cotizacionController)
+        public NotificationController(IMediator mediator)
         {
             _mediator = mediator;
-            _cotizacionController = cotizacionController;
         }
 
         [AllowAnonymous]
@@ -57,6 +56,16 @@ namespace JKM.API.Controllers
                 Actividades = actividades,
                 Productos = productos
             });
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost(template: "Auth/RecuperarUsuario")]
+        [SwaggerOperation("Envia un correo con las credenciales")]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> RecuperarUsuario(RecuperarUsuarioNotificationCommand request)
+        {
+            await _mediator.Publish(request);
             return Ok();
         }
     }
