@@ -22,7 +22,7 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetProyectoPaginado
         {
             string sql = $@"SELECT COUNT(1) FROM Proyecto;";
 
-            sql += $@"SELECT P.idProyecto, P.nombreProyecto, P.fechaInicio, 
+            sql += $@"SELECT P.idProyecto, P.nombre as nombreProyecto, P.fechaInicio, 
 						P.fechaFin, P.descripcion, EP.idEstado, EP.descripcion 'DescripcionEstado'
 					  FROM Proyecto P
 					  INNER JOIN EstadoProyecto EP ON (EP.idEstado = P.idEstado)

@@ -5,7 +5,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 {
     public class ProyectoModel
     {
-        public int IdProyecto { get; set; }
+        public int? IdProyecto { get; set; }
         public string NombreProyecto { get; set; }
         public string Descripcion { get; set; }
         public DateTime? FechaInicio { get; set; }
@@ -22,7 +22,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
             FechaFin = fechaFin;
         }
 
-        public void UpdateProyecto(int idProyecto = 0, DateTime? fechaInicio = null, DateTime? fechaFin = null,
+        public void UpdateProyecto(int? idProyecto = 0, DateTime? fechaInicio = null, DateTime? fechaFin = null,
             string nombreProyecto = "", string descripcion = "", int idEstado = 0, decimal precio = 0)
         {
             IdProyecto = idProyecto;
