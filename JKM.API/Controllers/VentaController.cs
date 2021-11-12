@@ -75,24 +75,6 @@ namespace JKM.API.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         [HttpGet(template: "Estado")]
         [SwaggerOperation("Retorna los estados de ventas")]
         [SwaggerResponse(200, "Retorna los estados", typeof(IEnumerable<Identifier>))]

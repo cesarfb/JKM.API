@@ -1,4 +1,5 @@
-﻿using JKM.PERSISTENCE.Repository.Venta;
+﻿using JKM.PERSISTENCE.Repository.Proyecto;
+using JKM.PERSISTENCE.Repository.Venta;
 using JKM.UTILITY.Utils;
 using MediatR;
 using System;
@@ -22,9 +23,13 @@ namespace JKM.APPLICATION.Commands.Venta.RegisterVenta
         {
             VentaModel ventaModel = new VentaModel();
 
+            ProyectoModel proyectoModel = new ProyectoModel();
+
             ventaModel.RegisterVenta(pagoParcial: request.PagoParcial, fechaCuota: request.FechaCuota, idVenta: request.IdVenta );
 
-            return await _ventaRepository.RegisterVenta(ventaModel);
+            proyectoModel.UpdateProyecto(idProyecto: request.IdProyecto, nombreProyecto: request.NombreProyecto, descripcion: request.DescripcionProyecto);
+
+            return await _ventaRepository.RegisterVenta(ventaModel, proyectoModel);
         }
     }
 }

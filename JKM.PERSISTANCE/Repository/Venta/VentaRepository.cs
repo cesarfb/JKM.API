@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using JKM.PERSISTENCE.Repository.Proyecto;
 using JKM.UTILITY.Utils;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace JKM.PERSISTENCE.Repository.Venta
             _conexion = conexion;
         }
 
-        public async Task<ResponseModel> RegisterVenta(VentaModel ventaModel)
+        public async Task<ResponseModel> RegisterVenta(VentaModel ventaModel, ProyectoModel proyectoModel)
         {
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
@@ -29,14 +30,106 @@ namespace JKM.PERSISTENCE.Repository.Venta
                 {
                     connection.Open();
 
+                    //Registro Cuota
                     string insert = $@"INSERT INTO DetalleVenta
                                         	(precio, fecha, idVenta)
-                                        VALUES 
+                                       VALUES 
                                         	(@PagoParcial, @FechaCuota, @IdVenta)";
 
                     int hasInsert = await connection.ExecuteAsync(insert, ventaModel);
+
                     if (hasInsert <= 0)
-                        Handlers.ExceptionClose(connection, "Error al registrar la venta");
+                        Handlers.ExceptionClose(connection, "Error al registrar la Cuota");
+
+                    //Comprueba si es segunda cuota o primera cuota
+                    string sql = $@"SELECT 
+						                idTipo
+                                    FROM Venta 
+					                WHERE idVenta = {ventaModel.IdVenta};";
+
+                    int idTipoVenta = await connection.QueryFirstAsync<int>(sql);
+
+                    string sqlCount = $@"SELECT 
+						                    COUNT(1)
+                                        FROM DetalleVenta 
+					                    WHERE idVenta = {ventaModel.IdVenta};";
+
+                    int countCuota = await connection.QueryFirstAsync<int>(sqlCount);
+
+                    if (countCuota == 1)
+                    {
+                        //Tipo Proyecto
+                        if (idTipoVenta == 1)
+                        {
+                            string insertProyecto = $@"INSERT INTO Proyecto
+                                        	            (nombre, fechaInicio, descripcion, idEstado)
+                                                   VALUES 
+                                        	            (@NombreProyecto, GETDATE(), @Descripcion, 1);
+
+                                                    SELECT ISNULL(@@IDENTITY,-1);";
+
+                            decimal hasInsertProyecto = (decimal)await connection.ExecuteScalarAsync(insertProyecto, proyectoModel);
+
+                            if (hasInsertProyecto <= 0)
+                                Handlers.ExceptionClose(connection, "Error al registrar la Proyecto");
+
+
+                            string insertProyectoVenta = $@"INSERT INTO ProyectoVenta
+                                        	                (idVenta, idProyecto)
+                                                        VALUES 
+                                        	                (@idVenta,  @idProyecto);";
+
+                            int hasInsertProyectoVenta = await connection.ExecuteAsync(insertProyectoVenta, new { idVenta = ventaModel.IdVenta, idProyecto = hasInsertProyecto });
+
+                            if (hasInsertProyectoVenta <= 0)
+                                Handlers.ExceptionClose(connection, "Error al registrar la Proyecto Venta");
+                        }
+
+                        //Tipo Pedido
+                        else if (idTipoVenta == 2)
+                        {
+
+                            if (proyectoModel.IdProyecto != null)
+                            {
+                                //Insertar Tabla Pedido
+                                string insertPedido = $@"INSERT INTO Pedido
+                                        	            (fechaRegistro, idVenta)
+                                                   VALUES 
+                                        	            (GETDATE(), @IdVenta);";
+
+                                int hasInsertPedido = await connection.ExecuteAsync(insertPedido, ventaModel);
+
+                                if (hasInsertPedido <= 0)
+                                    Handlers.ExceptionClose(connection, "Error al registrar el Pedido");
+
+                                //Insertar Tabla Proyecto Venta
+                                string insertProyectoVenta = $@"INSERT INTO ProyectoVenta
+                                        	                (idVenta, idProyecto)
+                                                        VALUES 
+                                        	                (@idVenta,  @idProyecto);";
+
+                                int hasInsertProyectoVenta = await connection.ExecuteAsync(insertProyectoVenta, new { idVenta = ventaModel.IdVenta, idProyecto = proyectoModel.IdProyecto });
+
+                                if (hasInsertProyectoVenta <= 0)
+                                    Handlers.ExceptionClose(connection, "Error al registrar la Proyecto Venta");
+                            }
+                            else
+                            {
+                                //Insertar Tabla Pedido
+                                string insertPedido = $@"INSERT INTO Pedido
+                                        	            (fechaRegistro, idVenta)
+                                                   VALUES 
+                                        	            (GETDATE(), @IdVenta);";
+
+                                int hasInsertPedido = await connection.ExecuteAsync(insertPedido, ventaModel);
+
+                                if (hasInsertPedido <= 0)
+                                    Handlers.ExceptionClose(connection, "Error al registrar el Pedido");
+                            }
+
+                        }
+                    }
+
 
                     return Handlers.CloseConnection(connection, trans, "Se registró la venta");
                 }

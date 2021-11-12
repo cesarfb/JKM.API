@@ -12,6 +12,14 @@ namespace JKM.APPLICATION.Commands.Venta.RegisterVenta
         public int? NumeroCuota { get; set; }
         public double PagoParcial { get; set; }
         public DateTime FechaCuota { get; set; }
+
+        //Tipo Proyecto
+        public string NombreProyecto { get; set; }
+        public string DescripcionProyecto { get; set; }
+
+        //Tipo Pedido
+
+        public int? IdProyecto { get; set; }
     }
 
     public class Validator : AbstractValidator<RegisterVentaCommand>
