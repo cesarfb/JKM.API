@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang='es'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+    <style>
+        @import url('http://fonts.cdnfonts.com/css/roboto');
+
+        * {
+            font-family: Roboto;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            color: black !important;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        hr {
+            width: 90%;
+            border-color: #553C9A;
+            margin: 0 auto;
+        }
+
+        .formulario {
+            border-collapse: collapse;
+            word-break: break-all;
+        }
+
+            .formulario td {
+                padding: 10px 15px;
+                text-align: left;
+            }
+
+        .tittle {
+            padding: 20px 0;
+        }
+
+        .formulario tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .formulario td,
+        th {
+            border: 1px solid #ddd;
+        }
+
+        .table-content {
+            width: 100%;
+            background: white;
+            text-align: center;
+        }
+
+        .table-head td,
+        th {
+            border: none;
+            padding: 20px 0 0 0;
+        }
+
+        .table-body {
+            height: 100%;
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        .center-table {
+            margin: 0 auto;
+            width: auto;
+            max-width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <table class='table-content'>
+        <tr class='table-head'>
+            <th>
+                <img width='190px'
+                     src='{LOGO}' />
+                <hr>
+            </th>
+        </tr>
+        <tr>
+            <td class='center-text tittle'>
+                <h2> Recuperar Usuario</h2>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class='center-table formulario'>
+                    <tr>
+                        <td>Nombre</td>
+                        <td>{NOMBRE}</td>
+                    </tr>
+                    <tr>
+                        <td>Apellido</td>
+                        <td>{APELLIDO}</td>
+                    </tr>
+                    <tr>
+                        <td>Usuario</td>
+                        <td>{USERNAME}</td>
+                    </tr>
+                    <tr>
+                        <td>Contraseña</td>
+                        <td>{PASSWORD}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

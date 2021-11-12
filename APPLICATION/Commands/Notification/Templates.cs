@@ -7,11 +7,22 @@ using System.IO;
 using IronPdf;
 using System.Linq;
 using IronPdf.Rendering;
+using JKM.APPLICATION.Commands.Notification.RecuperarUsuario;
 
 namespace JKM.APPLICATION.Utils
 {
     public static class Templates
     {
+        public static string RecuperarUsuarioHtml(RecuperarUsuarioModel usuario)
+        {
+            return ReadPhysicalFile(Assets.RecuperarUsuarioHtml)
+            .Replace("{LOGO}", Assets.Logo)
+            .Replace("{NOMBRE}", usuario.Nombre)
+            .Replace("{APELLIDO}", usuario.Apellido)
+            .Replace("{USERNAME}", usuario.Username)
+            .Replace("{PASSWORD}", usuario.Password);
+        }
+
         public static string ContactUsHtml(ContactUsNotificationCommand model)
         {
             return ReadPhysicalFile(Assets.ContactUsHtml)
