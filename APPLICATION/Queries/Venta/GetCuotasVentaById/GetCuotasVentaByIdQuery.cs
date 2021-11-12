@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using JKM.APPLICATION.Aggregates;
+using JKM.UTILITY.Utils;
 using MediatR;
 using System.Collections.Generic;
 
 namespace JKM.APPLICATION.Queries.Venta.GetCuotasVentaById
 {
-    public class GetCuotasVentaByIdQuery : IRequest<IEnumerable<VentaCuotasModel>>
+    public class GetCuotasVentaByIdQuery : IRequest<PaginadoResponse<VentaCuotasModel>>
     {
         public int IdVenta { get; set; }
     }
