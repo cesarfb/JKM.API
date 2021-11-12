@@ -11,7 +11,7 @@ namespace JKM.APPLICATION.Aggregates
         public string solicitante { get; set; }
         public string descripcion { get; set; }
         private DateTime fechaSolicitud { get; set; }
-        [JsonProperty("fechaSolicitud")]
+        [JsonProperty("fechaSolicitudString")]
         public string fechaSolicitudString
         {
             get
