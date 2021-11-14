@@ -117,9 +117,9 @@ namespace JKM.PERSISTENCE.Repository.Venta
                             {
                                 //Insertar Tabla Pedido
                                 string insertPedido = $@"INSERT INTO Pedido
-                                        	            (fechaRegistro, idVenta)
+                                        	            (fechaRegistro, idVenta, idEstado)
                                                    VALUES 
-                                        	            (GETDATE(), @IdVenta);";
+                                        	            (GETDATE(), @IdVenta, 1);";
 
                                 int hasInsertPedido = await connection.ExecuteAsync(insertPedido, ventaModel);
 
