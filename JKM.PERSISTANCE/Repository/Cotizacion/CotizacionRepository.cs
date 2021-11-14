@@ -50,7 +50,7 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     //Insert Venta
                     string insert = $@"INSERT INTO Venta 
                                         (idCotizacion,precio,fechaRegistro, idEstado, idTipo)
-		                                SELECT idCotizacion, precioCotizacion, GETDATE(), 1, 1  FROM Cotizacion 
+		                                SELECT idCotizacion, precioCotizacion, GETDATE(), 1, idTipoCotizacion  FROM Cotizacion 
                                         WHERE idCotizacion=@IdCotizacion";
 
                     int hasInsert = await connection.ExecuteAsync(insert, new { IdCotizacion = idCotizacion });
