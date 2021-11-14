@@ -23,13 +23,14 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
         {
             string sql = $@"SELECT C.idCotizacion, C.solicitante, C.descripcion, C.fechaSolicitud,
                         C.descripcion, C.email, CLI.idCliente, CLI.razonSocial,
-                        EC.idEstado, EC.descripcion as 'descripcionEstado',
+                        EC.idEstado, EC.descripcion as 'descripcionEstado',TIPO.descripcion as 'descripcionTipoCotizacion',
                         C.precioCotizacion,
                         CASE WHEN C.idEstado = 1
 	                        THEN 1 ELSE 0 END 'canEdit',
                         CASE WHEN C.idEstado = 1
 	                        THEN 1 ELSE 0 END 'canDelete',
                         CASE WHEN C.idEstado = 1
+                                    AND ((C.idTipoCotizacion = 1
 			                        AND ISNULL(TRIM(C.descripcion),'') <> ''
 			                        AND C.precioCotizacion > 0
 			                        AND (SELECT COUNT(1) 
@@ -37,12 +38,17 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
 				                        WHERE idCotizacion = C.idCotizacion) > 0
 			                        AND (SELECT COUNT(1) 
 				                        FROM ActividadProyecto
-				                        WHERE idCotizacion = C.idCotizacion) > 0
+				                        WHERE idCotizacion = C.idCotizacion) > 0)
+                                    OR (C.idTipoCotizacion = 2
+                                        AND (SELECT COUNT(1) 
+				                        FROM DetalleOrden
+				                        WHERE idCotizacion = C.idCotizacion) > 0))
 	                        THEN 1
 	                        ELSE 0 END AS 'canCotizar'
                         FROM Cotizacion C 
                         INNER JOIN EstadoCotizacion EC  ON (C.idEstado = EC.idEstado)
                         INNER JOIN Cliente CLI ON CLI.idCliente=C.idCliente
+                        INNER JOIN TipoCotizacion TIPO  ON TIPO.idTipoCotizacion = C.idTipoCotizacion 
 	                    ORDER BY canEdit desc, C.fechaSolicitud DESC;";
 
             using (IDbConnection connection = _conexion)
