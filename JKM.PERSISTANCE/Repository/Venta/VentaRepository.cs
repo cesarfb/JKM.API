@@ -92,10 +92,13 @@ namespace JKM.PERSISTENCE.Repository.Venta
                             if (proyectoModel.IdProyecto != null)
                             {
                                 //Insertar Tabla Pedido
-                                string insertPedido = $@"INSERT INTO Pedido
-                                        	            (fechaRegistro, idVenta)
+                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
+                                                         DECLARE @Codigo NVARCHAR = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
+                                                    INSERT INTO Pedido
+                                        	            (fechaRegistro, idVenta, codigo)
                                                    VALUES 
-                                        	            (GETDATE(), @IdVenta);";
+                                        	            (GETDATE(), @IdVenta, @Codigo);
+                                                    SELECT SCOPE_IDENTITY()";
 
                                 int hasInsertPedido = await connection.ExecuteAsync(insertPedido, ventaModel);
 
@@ -116,10 +119,12 @@ namespace JKM.PERSISTENCE.Repository.Venta
                             else
                             {
                                 //Insertar Tabla Pedido
-                                string insertPedido = $@"INSERT INTO Pedido
-                                        	            (fechaRegistro, idVenta, idEstado)
+                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
+                                                         DECLARE @Codigo NVARCHAR = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
+                                                    INSERT INTO Pedido
+                                        	            (fechaRegistro, idVenta, idEstado, codigo)
                                                    VALUES 
-                                        	            (GETDATE(), @IdVenta, 1);";
+                                        	            (GETDATE(), @IdVenta, 1, @Codigo);";
 
                                 int hasInsertPedido = await connection.ExecuteAsync(insertPedido, ventaModel);
 

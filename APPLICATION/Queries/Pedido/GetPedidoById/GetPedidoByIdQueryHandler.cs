@@ -21,9 +21,7 @@ namespace JKM.APPLICATION.Queries.Pedido.GetPedidoById
 
         public async Task<PedidoModelFormat> Handle(GetPedidoByIdQuery request, CancellationToken cancellationToken)
         {
-            //string sql = $@"SELECT COUNT(1) FROM Pedido;";
-
-            string sql = $@"SELECT P.idPedido, P.fechaRegistro, P.fechaEntrega,
+            string sql = $@"SELECT P.idPedido, P.fechaRegistro, P.fechaEntrega, P.codigo AS 'codigoOrden',
 					  EP.idEstado, EP.descripcion,
 					  V.precio as 'Precio', 
 					  C.solicitante, C.email,
@@ -52,6 +50,7 @@ namespace JKM.APPLICATION.Queries.Pedido.GetPedidoById
 
                     PedidoModelFormat pedido = new PedidoModelFormat();
                     pedido.IdPedido = pedidoModel.FirstOrDefault().IdPedido;
+                    pedido.CodigoOrden = pedidoModel.FirstOrDefault().CodigoOrden;
                     pedido.Precio = pedidoModel.FirstOrDefault().Precio;
                     pedido.Solicitante = pedidoModel.FirstOrDefault().Solicitante;
                     pedido.Email = pedidoModel.FirstOrDefault().Email;

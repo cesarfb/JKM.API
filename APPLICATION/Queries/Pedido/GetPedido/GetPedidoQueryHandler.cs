@@ -21,36 +21,21 @@ namespace JKM.APPLICATION.Queries.Pedido.GetPedido
 
         public async Task<IEnumerable<PedidoModel>> Handle(GetPedidoQuery request, CancellationToken cancellationToken)
         {
-             //sql = $@"SELECT COUNT(1) FROM Pedido;";
-
-            string sql = $@"SELECT P.idPedido, P.fechaRegistro, P.fechaEntrega, 
-					  EP.idEstado, EP.descripcion,
-					  V.precio, C.solicitante, C.email,
-                      CLI.razonSocial as 'cliente'
-					  FROM Pedido P
-                      INNER JOIN EstadoPedido EP ON EP.idEstado = P.idEstado
-                      INNER JOIN Venta V ON V.idVenta = P.idVenta
-                      INNER JOIN Cotizacion C ON C.idCotizacion = V.idCotizacion
-                      INNER JOIN Cliente CLI ON C.idCliente = CLI.idCliente
-					  ORDER BY P.idPedido DESC;";
+            string sql = $@"SELECT P.idPedido, P.fechaRegistro, P.fechaEntrega, P.codigo AS 'codigoOrden',
+					          EP.idEstado, EP.descripcion,
+					          V.precio, C.solicitante, C.email,
+                              CLI.razonSocial as 'cliente'
+					          FROM Pedido P
+                              INNER JOIN EstadoPedido EP ON EP.idEstado = P.idEstado
+                              INNER JOIN Venta V ON V.idVenta = P.idVenta
+                              INNER JOIN Cotizacion C ON C.idCotizacion = V.idCotizacion
+                              INNER JOIN Cliente CLI ON C.idCliente = CLI.idCliente
+					          ORDER BY P.idPedido DESC;";
 
             using (IDbConnection connection = _conexion)
             {
                 try
                 {
-                    //PaginadoResponse<PedidoModelPaginado> newPaginado = new PaginadoResponse<PedidoModelPaginado>();
-
-                    //connection.Open();
-                    //using (var multi = await connection.QueryMultipleAsync(sql))
-                    //{
-                    //    newPaginado.TotalRows = multi.ReadFirst<int>();
-                    //    newPaginado.Data = multi.Read<PedidoModel>().AsList();
-                    //}
-                    //connection.Close();
-
-                    //if (newPaginado.Data.AsList().Count == 0) throw new ArgumentNullException();
-
-                    //return newPaginado;
                     connection.Open();
                     IEnumerable<PedidoModel> pedidos =
                             await connection.QueryAsync<PedidoModel>(sql);
