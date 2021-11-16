@@ -8,22 +8,23 @@ namespace JKM.APPLICATION.Aggregates
     public class PedidoModelPaginado
     {
         public int IdPedido { get; set; }
+        public string CodigoOrden { get; set; }
         public DateTime FechaRegistro { get; set; }
-        [JsonProperty("fechaRegistro")]
-        public string FechaRegistroString
+        [JsonProperty("fechaRegistroString")]
+        public string fechaRegistroString
         {
             get
             {
                 return FechaRegistro.ToString("yyyy-MM-dd");
             }
         }
-        public DateTime FechaEntrega { get; set; }
-        [JsonProperty("fechaEntrega")]
-        public string FechaEntregaString
+        public DateTime? FechaEntrega { get; set; }
+        [JsonProperty("fechaEntregaString")]
+        public string fechaEntregaString
         {
             get
             {
-                return FechaEntrega.ToString("yyyy-MM-dd");
+                return FechaEntrega?.ToString("yyyy-MM-dd");
             }
         }
         public int IdEstado { get; set; }
@@ -43,20 +44,23 @@ namespace JKM.APPLICATION.Aggregates
     public class PedidoModel : PedidoModelPaginado
     {
         public int Precio { get; set; }
-        public int Solicitante { get; set; }
-        public int Email { get; set; }
+        public string Solicitante { get; set; }
+        public string Email { get; set; }
         public int Cantidad { get; set; }
         public float PrecioProd { get; set; }
+        public float PrecioTotal { get; set; }
         public int IdProducto { get; set; }
-        public int Codigo { get; set; }
-        public int Nombre { get; set; }
-        public int Imagen { get; set; }
+        public string Codigo { get; set; }
+        public string Nombre { get; set; }
+        public string Imagen { get; set; }
+        public string Cliente { get; set; }
     }
     public class PedidoModelFormat : PedidoModelPaginado
     {
         public int Precio { get; set; }
-        public int Solicitante { get; set; }
-        public int Email { get; set; }
+        public string Solicitante { get; set; }
+        public string Email { get; set; }
+        public string Cliente { get; set; }
         public List<Pedidos> Pedidos { get; set; }
     }
 
@@ -65,8 +69,13 @@ namespace JKM.APPLICATION.Aggregates
         public int Cantidad { get; set; }
         public float PrecioProd { get; set; }
         public int IdProducto { get; set; }
-        public int Codigo { get; set; }
-        public int Nombre { get; set; }
-        public int Imagen { get; set; }
+        public string Codigo { get; set; }
+        public string Nombre { get; set; }
+        public string Imagen { get; set; }
+    }
+
+    public class EstadosPedidoModel
+    {
+
     }
 }

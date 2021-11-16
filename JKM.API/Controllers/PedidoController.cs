@@ -1,4 +1,7 @@
-﻿using JKM.APPLICATION.Queries.Pedido.GetPedido;
+﻿using JKM.APPLICATION.Commands.Pedido.UpdateEstado;
+using JKM.APPLICATION.Commands.Pedido.UpdateFechaEntrega;
+using JKM.APPLICATION.Queries.Pedido.GetEstados;
+using JKM.APPLICATION.Queries.Pedido.GetPedido;
 using JKM.APPLICATION.Queries.Pedido.GetPedidoById;
 using JKM.UTILITY.Utils;
 using MediatR;
@@ -27,6 +30,15 @@ namespace JKM.API.Controllers
             return Ok(await _mediator.Send(new GetPedidoQuery()));
         }
 
+        [HttpGet(template: "Estados")]
+        [SwaggerOperation("Retorna los estados de pedidos")]
+        [SwaggerResponse(200, "Retorna los estados", typeof(PaginadoResponse<GetPedidoQuery>))]
+        [SwaggerResponse(204, "No se encontraron estados")]
+        public async Task<IActionResult> GetEstadosPedido()
+        {
+            return Ok(await _mediator.Send(new GetEstadoQuery()));
+        }
+
 
         [HttpGet(template: "{idPedido}")]
         [SwaggerOperation("Retorna el pedido en base a su id")]
@@ -36,5 +48,22 @@ namespace JKM.API.Controllers
         {
             return Ok(await _mediator.Send(new GetPedidoByIdQuery() { IdPedido = idPedido }));
         }
+
+        [HttpPut(template: "{idPedido}/Estado")]
+        [SwaggerOperation("Retorna el pedido en base a su id")]
+        public async Task<IActionResult> UpdateEstado(int idPedido, [FromBody] UpdateEstadoCommand request)
+        {
+            request.IdPedido = idPedido;
+            return Ok(await _mediator.Send(request));
+        }
+
+        [HttpPut(template: "{idPedido}/FechaEntrega")]
+        [SwaggerOperation("Retorna el pedido en base a su id")]
+        public async Task<IActionResult> UpdateFechaEntrega(int idPedido, [FromBody] UpdateFechaEntregaCommand request)
+        {
+            request.IdPedido = idPedido;
+            return Ok(await _mediator.Send(request));
+        }
+
     }
 }

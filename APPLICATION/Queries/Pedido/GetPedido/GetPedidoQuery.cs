@@ -7,7 +7,7 @@ using System.Text;
 
 namespace JKM.APPLICATION.Queries.Pedido.GetPedido
 {
-    public class GetPedidoQuery : IRequest<PaginadoResponse<PedidoModelPaginado>>
+    public class GetPedidoQuery : IRequest<IEnumerable<PedidoModel>>
     {
     }
 }

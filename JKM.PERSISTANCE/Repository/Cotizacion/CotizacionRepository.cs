@@ -25,6 +25,10 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
 						    WHERE idCotizacion = {idCotizacion} 
 						    AND idEstado = 1;";
 
+            sql += $@"SELECT idTipoCotizacion
+                      FROM Cotizacion
+                      WHERE idCotizacion = {idCotizacion};";
+
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
             {
@@ -32,7 +36,9 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                 {
                     connection.Open();
 
-                    int exist = await connection.QueryFirstAsync<int>(sql);
+                    GridReader multi = await connection.QueryMultipleAsync(sql);
+                    int exist = multi.ReadFirst<int>();
+                    int idTipo = multi.ReadFirst<int>();
 
                     if (exist == 0)
                         Handlers.ExceptionClose(connection, "No se encontró la cotización");
@@ -50,13 +56,24 @@ namespace JKM.PERSISTENCE.Repository.Cotizacion
                     //Insert Venta
                     string insert = $@"INSERT INTO Venta 
                                         (idCotizacion,precio,fechaRegistro, idEstado, idTipo)
-		                                SELECT idCotizacion, precioCotizacion, GETDATE(), 1, 1  FROM Cotizacion 
+		                                SELECT idCotizacion, precioCotizacion, GETDATE(), 1, idTipoCotizacion  FROM Cotizacion 
                                         WHERE idCotizacion=@IdCotizacion";
 
                     int hasInsert = await connection.ExecuteAsync(insert, new { IdCotizacion = idCotizacion });
 
                     if (hasInsert <= 0)
                         Handlers.ExceptionClose(connection, "Ocurrió un error al insertar el proyecto");
+
+                    //Si es Producto eliminamos Trabajadores y actividades en caso se hayan agregado
+                    if (idTipo == 2)
+                    {
+                        string delete = $@"DELETE TipoTrabajadorCotizacion
+                                        WHERE idCotizacion=@IdCotizacion";
+
+                        delete += $@"DELETE ActividadProyecto
+                                        WHERE idCotizacion=@IdCotizacion";
+          
+                    }
 
                     return Handlers.CloseConnection(connection, trans, "Se aceptó la cotización");
                 }
