@@ -19,7 +19,7 @@ namespace JKM.PERSISTENCE.Repository.Auth
         }
         public async Task<ResponseModel> LoginUser(AuthModel model)
         {
-            string sql = $@"SELECT idUsuario
+            string sql = $@"SELECT *
                             FROM Usuario
                             WHERE username = @Username
                             AND password = @Password;";
@@ -28,13 +28,17 @@ namespace JKM.PERSISTENCE.Repository.Auth
             {
                 connection.Open();
 
-                int idUser = await connection.QueryFirstOrDefaultAsync<int>(sql, model);
+                AuthModel user = await connection.QueryFirstOrDefaultAsync<AuthModel>(sql, model);
 
-                if (idUser <= 0)
+                if (user == null)
                     Handlers.ExceptionClose(connection, "Credenciales incorrectas");
 
+
+                if (user.IdEstado == 2)
+                    Handlers.ExceptionClose(connection, "El usuario ha sido desactivado por un administrador");
+
                 ResponseModel response = Handlers.CloseConnection(connection, null, "Credenciales correctas");
-                response.Data = _jwtService.CreateToken(idUser, model.Username);
+                response.Data = _jwtService.CreateToken(user.IdUsuario, model.Username);
                 return response;
             }
         }
