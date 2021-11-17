@@ -20,7 +20,7 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTipoTrabajador
 
         public async Task<IEnumerable<TipoTrabajador>> Handle(GetTipoTrabajadorQuery request, CancellationToken cancellationToken)
         {
-			string sql = $@"SELECT idTipoTrabajador 'id', descripcion, precioReferencial
+			string sql = $@"SELECT idTipoTrabajador 'id', descripcion, precioReferencial, nombre
 							FROM TipoTrabajador";
 
 			using (IDbConnection connection = _conexion)

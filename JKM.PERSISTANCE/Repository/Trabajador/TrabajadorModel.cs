@@ -31,4 +31,25 @@ namespace JKM.PERSISTENCE.Repository.Trabajador
             IdEstado = idEstado;
         }
     }
+
+    public class TipoTrabajadorProyectoModel
+    {
+        public int IdTipoTrabajador { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion{ get; set; }
+        public decimal PrecioReferencial{ get; set; }
+        public void Register(string nombre, string descripcion, decimal precioReferencial)
+        {
+            Nombre = nombre;
+            Descripcion = descripcion;
+            PrecioReferencial = precioReferencial;
+        }
+        public void Update(int idTipoTrabajador, string nombre, string descripcion, decimal precioReferencial)
+        {
+            IdTipoTrabajador = idTipoTrabajador;
+            Nombre = nombre;
+            Descripcion = descripcion;
+            PrecioReferencial = precioReferencial;
+        }
+    }
 }

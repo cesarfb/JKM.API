@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using JKM.APPLICATION.Commands.Trabajador.RegisterTrabajador;
 using JKM.APPLICATION.Commands.Trabajador.UpdateTrabajador;
 using JKM.APPLICATION.Commands.Trabajador.DeleteTrabajador;
+using JKM.APPLICATION.Queries.Trabajador.GetTipoTrabajadorById;
 
 namespace JKM.API.Controllers
 {
@@ -105,6 +106,17 @@ namespace JKM.API.Controllers
         public async Task<IActionResult> GetTipoTrabajador()
         {
             GetTipoTrabajadorQuery request = new GetTipoTrabajadorQuery();
+            return Ok(await _mediator.Send(request));
+        }
+
+        [HttpGet(template: "Tipo/{idTipoTrabajador}")]
+        [SwaggerOperation("Retorna un tipo en base a su Id")]
+        [SwaggerResponse(200, "Retorna el tipo", typeof(IEnumerable<TipoTrabajador>))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> GetTipoTrabajadorById(int idTipoTrabajador)
+        {
+            GetTipoTrabajadorByIdQuery request = new GetTipoTrabajadorByIdQuery();
+            request.IdTrabajador = idTipoTrabajador;
             return Ok(await _mediator.Send(request));
         }
     }
