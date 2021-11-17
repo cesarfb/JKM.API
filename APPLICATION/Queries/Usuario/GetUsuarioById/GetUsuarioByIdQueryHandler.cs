@@ -25,10 +25,11 @@ namespace JKM.APPLICATION.Queries.Usuario.GetUsuarioById
             string sql = $@"select 
                             	DU.nombre,
                             	DU.apellido,
+                            	DU.email,
+                            	DU.fechaNacimiento,
                             	U.username,
                             	U.password,
-                            	DU.fechaNacimiento,
-                            	R.descripcion
+                            	R.idRol
                             from 
                             	Usuario U inner join
                             	DetalleUsuario DU on DU.idDetalleUsuario = U.idDetalleUsuario inner join
@@ -42,8 +43,7 @@ namespace JKM.APPLICATION.Queries.Usuario.GetUsuarioById
                 {
                     connection.Open();
 
-                    UsuarioModel usuarioModel =
-                        await connection.QueryFirstOrDefaultAsync<UsuarioModel>(sql);
+                    UsuarioModel usuarioModel = await connection.QueryFirstOrDefaultAsync<UsuarioModel>(sql);
 
                     connection.Close();
 

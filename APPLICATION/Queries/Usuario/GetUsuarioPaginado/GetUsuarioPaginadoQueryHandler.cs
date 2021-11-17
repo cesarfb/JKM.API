@@ -33,11 +33,13 @@ namespace JKM.APPLICATION.Queries.Usuario.GetUsuarioPaginado
                     	DU.nombre,
                     	DU.apellido,
                     	DU.fechaNacimiento,
-                    	R.descripcion
+                    	R.descripcion as descripcionRol,
+                        EU.descripcion as descripcionEstado
                     from 
                     	Usuario U inner join
                     	DetalleUsuario DU on DU.idDetalleUsuario = U.idDetalleUsuario inner join
-                    	Rol R on R.idRol = U.idRol";
+                    	Rol R on R.idRol = U.idRol inner join
+                        EstadoUsuario EU on EU.idEstado = U.idEstado";
 
             using (IDbConnection connection = _conexion)
             {
