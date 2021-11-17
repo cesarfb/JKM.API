@@ -15,6 +15,8 @@ using JKM.APPLICATION.Commands.Trabajador.RegisterTrabajador;
 using JKM.APPLICATION.Commands.Trabajador.UpdateTrabajador;
 using JKM.APPLICATION.Commands.Trabajador.DeleteTrabajador;
 using JKM.APPLICATION.Queries.Trabajador.GetTipoTrabajadorById;
+using JKM.APPLICATION.Commands.Trabajador.UpdateTipoTrabajador;
+using JKM.APPLICATION.Commands.Trabajador.RegisterTipoTrabajador;
 
 namespace JKM.API.Controllers
 {
@@ -117,6 +119,25 @@ namespace JKM.API.Controllers
         {
             GetTipoTrabajadorByIdQuery request = new GetTipoTrabajadorByIdQuery();
             request.IdTrabajador = idTipoTrabajador;
+            return Ok(await _mediator.Send(request));
+        }
+
+        [HttpPost(template: "Tipo")]
+        [SwaggerOperation("Registra un nuevo tipo trabajador")]
+        [SwaggerResponse(200, "Registra un tipo trabajador", typeof(ResponseModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> RegisterTipoTrabajador([FromBody] RegisterTipoTrabajadorCommand request)
+        {
+            return Ok(await _mediator.Send(request));
+        }
+
+        [HttpPut(template: "Tipo/{idTipoTrabajador}")]
+        [SwaggerOperation("Actualiza un tipo trabajador en basea su id")]
+        [SwaggerResponse(200, "Actualiza un tipo trabajador", typeof(ResponseModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> UpdateTipoTrabajador(int idTipoTrabajador, [FromBody] UpdateTipoTrabajadorCommand request)
+        {
+            request.IdTipoTrabajador = idTipoTrabajador;
             return Ok(await _mediator.Send(request));
         }
     }
