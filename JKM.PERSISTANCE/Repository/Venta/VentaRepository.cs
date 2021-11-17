@@ -89,8 +89,8 @@ namespace JKM.PERSISTENCE.Repository.Venta
                             if (proyectoModel.IdProyecto != null)
                             {
                                 //Insertar Tabla Pedido
-                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
-                                                         DECLARE @Codigo NVARCHAR = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
+                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR(20) = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
+                                                         DECLARE @Codigo NVARCHAR(20) = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
                                                     INSERT INTO Pedido
                                         	            (fechaRegistro, idVenta, codigo)
                                                    VALUES 
@@ -116,8 +116,8 @@ namespace JKM.PERSISTENCE.Repository.Venta
                             else
                             {
                                 //Insertar Tabla Pedido
-                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
-                                                         DECLARE @Codigo NVARCHAR = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
+                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR(20) = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
+                                                         DECLARE @Codigo NVARCHAR(20) = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
                                                     INSERT INTO Pedido
                                         	            (fechaRegistro, idVenta, idEstado, codigo)
                                                    VALUES 

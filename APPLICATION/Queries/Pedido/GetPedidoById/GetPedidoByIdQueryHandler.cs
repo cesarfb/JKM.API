@@ -57,6 +57,8 @@ namespace JKM.APPLICATION.Queries.Pedido.GetPedidoById
                     pedido.FechaRegistro = pedidoModel.FirstOrDefault().FechaRegistro;
                     pedido.FechaEntrega = pedidoModel.FirstOrDefault().FechaEntrega;
                     pedido.Cliente = pedidoModel.FirstOrDefault().Cliente;
+                    pedido.IdEstado = pedidoModel.FirstOrDefault().IdEstado;
+                    pedido.Descripcion = pedidoModel.FirstOrDefault().Descripcion;
                     pedido.Pedidos = (from p in pedidoModel
                                       select new Pedidos { 
                                           IdProducto = p.IdProducto,
