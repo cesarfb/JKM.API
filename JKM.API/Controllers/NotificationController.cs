@@ -13,6 +13,7 @@ using JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion;
 using JKM.APPLICATION.Queries.Cotizacion.GetDetalleOrdenByCotizacion;
 using JKM.APPLICATION.Commands.Notification.AceptarCotizacion;
 using JKM.APPLICATION.Commands.Notification.RecuperarUsuario;
+using JKM.APPLICATION.Commands.Notification.EnviarCotizacion;
 
 namespace JKM.API.Controllers
 {
@@ -33,6 +34,16 @@ namespace JKM.API.Controllers
         [SwaggerOperation("Envia un correo de notificacion de una solicitud")]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> ContactUs([FromBody] ContactUsNotificationCommand request)
+        {
+            await _mediator.Publish(request);
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost(template: "Cotizacion")]
+        [SwaggerOperation("Envia un correo de notificacion de una cotizacion")]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> Cotizacion(EnviarCotizacionCommand request)
         {
             await _mediator.Publish(request);
             return Ok();
