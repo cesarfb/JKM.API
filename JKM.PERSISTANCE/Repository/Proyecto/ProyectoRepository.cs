@@ -74,21 +74,6 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                             Handlers.ExceptionClose(connection, "No se encontró el estado");
                     }
 
-                    if (proyectoModel.Precio > 0)
-                    {
-                        string updatePrecio = $@"UPDATE Venta
-			                               SET precioTotal = @Precio
-			                               WHERE idVenta = (SELECT idVenta 
-								                            FROM Proyecto
-								                            WHERE idProyecto = @IdProyecto);";
-
-                        int hasUpdatePrecio = await connection.ExecuteAsync(updatePrecio, proyectoModel);
-
-                        if (hasUpdatePrecio <= 0)
-                            Handlers.ExceptionClose(connection, "Error al actualizar el proyecto");
-
-                    }
-
                     string update = $@"UPDATE Proyecto
 		                                    SET nombreProyecto = @Nombre,
 			                                    descripcion = @Descripcion,

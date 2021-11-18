@@ -19,15 +19,23 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetProyectoById
 
         public async Task<ProyectoModel> Handle(GetProyectoByIdQuery request, CancellationToken cancellationToken)
         {
-			string sql = $@"SELECT P.idProyecto, P.nombreProyecto, P.fechaInicio, P.fechaFin, P.descripcion,
+			string sql = $@"SELECT P.idProyecto, P.nombre as nombreProyecto, MIN(AP.fechaInicio) as fechaInicio, 
+								MAX(AP.fechaFin) as fechaFin, P.descripcion,
 								EP.idEstado, EP.descripcion 'DescripcionEstado',
-								V.precioTotal 'Precio', V.idCotizacion,
-								C.razonSocial, C.ruc, C.idCliente
+								V.precio 'Precio', V.idCotizacion,
+								CLI.razonSocial, CLI.ruc, CLI.idCliente
 							FROM Proyecto P
 							INNER JOIN EstadoProyecto EP ON (EP.idEstado = P.idEstado)
-							INNER JOIN Venta V ON (V.idVenta = P.idVenta)
-							INNER JOIN Cliente C ON (C.idCliente = V.idCliente)
-							WHERE P.idProyecto = {request.IdProyecto};";
+							INNER JOIN ProyectoVenta PV ON (PV.idProyecto=P.idProyecto)
+							INNER JOIN Venta V ON (V.idVenta = PV.idVenta)
+							INNER JOIN Cotizacion C ON (C.idCotizacion = V.idCotizacion)
+							LEFT JOIN ActividadProyecto AP ON(AP.idCotizacion =  C.idCotizacion)
+							INNER JOIN Cliente CLI ON (CLI.idCliente = C.idCliente)
+							WHERE P.idProyecto = {request.IdProyecto}
+							group by P.idProyecto, P.nombre, P.descripcion,
+								EP.idEstado, EP.descripcion,
+								V.precio, V.idCotizacion,
+								CLI.razonSocial, CLI.ruc, CLI.idCliente;";
 
 			using (IDbConnection connection = _conexion)
 			{
