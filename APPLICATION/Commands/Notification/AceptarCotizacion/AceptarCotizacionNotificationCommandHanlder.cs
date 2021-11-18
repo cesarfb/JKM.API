@@ -51,7 +51,7 @@ namespace JKM.APPLICATION.Commands.Notification.AceptarCotizacion
 
                 mail.To.Add(cotizacion.email);
                 mail.Subject = "Solicitud de Servicio";
-                mail.Body = Templates.CotizacionHtml(cotizacion, trabajadores);
+                //mail.Body = Templates.CotizacionHtml(cotizacion, trabajadores);
 
                 using (SmtpClient smtp = _smtp)
                 {
