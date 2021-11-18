@@ -22,11 +22,20 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetProyectoPaginado
         {
             string sql = $@"SELECT COUNT(1) FROM Proyecto;";
 
-            sql += $@"SELECT P.idProyecto, P.nombre as nombreProyecto, P.fechaInicio, 
-						P.fechaFin, P.descripcion, EP.idEstado, EP.descripcion 'DescripcionEstado'
-					  FROM Proyecto P
-					  INNER JOIN EstadoProyecto EP ON (EP.idEstado = P.idEstado)
-					  ORDER BY P.idProyecto DESC;";
+            sql += $@"SELECT 
+	                    P.idProyecto, P.nombre as nombreProyecto, MIN(AP.fechaInicio) as fechaInicio, 
+	                    MAX(AP.fechaFin) as fechaFin, P.descripcion, EP.idEstado, 
+	                    EP.descripcion 'DescripcionEstado'
+                    FROM Proyecto P
+                    INNER JOIN EstadoProyecto EP ON (EP.idEstado = P.idEstado)
+                    INNER JOIN ProyectoVenta PV ON (PV.idProyecto=P.idProyecto)
+                    INNER JOIN Venta V ON (V.idVenta = PV.idVenta)
+                    INNER JOIN Cotizacion C ON (C.idCotizacion = V.idCotizacion)
+                    LEFT JOIN ActividadProyecto AP ON(AP.idCotizacion =  C.idCotizacion)
+                    GROUP BY P.idProyecto, P.nombre, P.descripcion, 
+	                    EP.descripcion, EP.idEstado
+                   
+                    ORDER BY P.idProyecto DESC;";
 
             using (IDbConnection connection = _conexion)
             {
