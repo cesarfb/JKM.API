@@ -21,7 +21,7 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetTrabajadoresByCotizacion
         public async Task<IEnumerable<TipoTrabajadorModel>> Handle(GetTrabajadoresByCotizacionQuery request, CancellationToken cancellationToken)
         {
             string sql = $@"SELECT TTC.idCotizacion, TTC.precio, TTC.cantidad,
-			                    TT.idTipoTrabajador, TT.descripcion
+			                    TT.idTipoTrabajador, TT.nombre as 'descripcion'
 			                FROM TipoTrabajadorCotizacion TTC
 			                INNER JOIN TipoTrabajador TT ON TT.idTipoTrabajador = TTC.idTipoTrabajador
 			                WHERE idCotizacion = {request.IdCotizacion}";
