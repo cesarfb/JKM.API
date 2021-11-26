@@ -113,7 +113,7 @@ namespace JKM.API.Controllers
 
         [HttpGet(template: "{idProyecto}/Actividades")]
         [SwaggerOperation("Retorna las actividades de un proyecto")]
-        [SwaggerResponse(200, "Retorna las actividades", typeof(IEnumerable<ActividadCotizacionModel>))]
+        [SwaggerResponse(200, "Retorna las actividades", typeof(IEnumerable<ActividadProyectoTreeNode>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetActividadesByProyecto(int idProyecto)
         {

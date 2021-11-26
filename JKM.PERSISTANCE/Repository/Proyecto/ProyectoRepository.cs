@@ -75,10 +75,8 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                     }
 
                     string update = $@"UPDATE Proyecto
-		                                    SET nombreProyecto = @Nombre,
+		                                    SET nombre = @NombreProyecto,
 			                                    descripcion = @Descripcion,
-			                                    fechaInicio = @FechaInicio,
-			                                    fechaFin = @FechaFin,
 			                                    idEstado = @IdEstado
 		                                    WHERE idProyecto = @IdProyecto;";
 
@@ -104,10 +102,11 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
             sql += $@"SELECT COUNT(1) 
 					  FROM Trabajador 
 					  WHERE idTrabajador = {idTrabajador};";
+
             sql += $@"SELECT COUNT(1) 
-					  FROM TrabajadorProyecto 
-					  WHERE idProyecto = {idProyecto} 
-					  	AND idTrabajador = {idTrabajador};";
+					  FROM ProyectoTrabajador 
+					  WHERE idTrabajador = {idTrabajador}
+                        AND idProyecto != {idProyecto};";
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
@@ -132,7 +131,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                             Handlers.ExceptionClose(connection, "El trabajador ya se encuentra asignado a un proyecto");
                     }
 
-                    string insert = $@"INSERT INTO TrabajadorProyecto
+                    string insert = $@"INSERT INTO ProyectoTrabajador
 		                                    (idTrabajador, idProyecto)
 		                                    VALUES
 		                                    (@IdTrabajador, @IdProyecto);";
@@ -143,7 +142,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         Handlers.ExceptionClose(connection, "No se pudo asignar al trabajador al proyecto");
 
                     string update = $@"UPDATE Trabajador
-		                                    SET idEstado = 3
+		                                    SET idEstado = 2
 		                                    WHERE idTrabajador = {idTrabajador};";
 
                     int hasUpdate = await connection.ExecuteAsync(update);
@@ -186,20 +185,20 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         if (existTrabajador <= 0)
                             Handlers.ExceptionClose(connection, "No se encontró al trabajador");
 
-                        string delete = $@"DELETE FROM TrabajadorProyecto
+                        string delete = $@"DELETE FROM ProyectoTrabajador
 		                                    WHERE idProyecto = {idProyecto}
 			                                    AND idTrabajador = {idTrabajador};";
 
                         int hasDelete = await connection.ExecuteAsync(delete);
 
-                        if (existTrabajador <= 0)
+                        if (hasDelete <= 0)
                             Handlers.ExceptionClose(connection, "Ocurrió un error al desvincular el trabajador");
 
                         string update = $@"UPDATE Trabajador
-		                                    SET idEstado = 2
+		                                    SET idEstado = 1
 		                                    WHERE idTrabajador = {idTrabajador};";
 
-                        int hasUpdate = await connection.ExecuteAsync(delete);
+                        int hasUpdate = await connection.ExecuteAsync(update);
 
                         if (hasUpdate <= 0)
                             Handlers.ExceptionClose(connection, "Ocurrió un error al desvincular el trabajador");
@@ -219,9 +218,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
             string sql = $@"SELECT COUNT(1) 
 							FROM ActividadProyecto 
 							WHERE idActividad = {actividadModel.IdActividad};";
-            sql += $@"SELECT idProyecto
-					  FROM ActividadProyecto
-					  WHERE idActividad = {actividadModel.IdActividad};";
+
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
@@ -233,25 +230,23 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                     using (GridReader multi = await connection.QueryMultipleAsync(sql))
                     {
                         int existAct = multi.ReadFirst<int>();
-                        int idProyecto = multi.ReadFirst<int>();
 
                         if (existAct <= 0)
                             Handlers.ExceptionClose(connection, "No se encontró la actividad");
-                        if (idProyecto <= 0)
-                            Handlers.ExceptionClose(connection, "No se encontró el proyecto");
-
-                        actividadModel.IdProyecto = idProyecto;
 
                         string sqlAct = $@"SELECT COUNT(1) 
-							                FROM ActividadProyecto 
-							                WHERE descripcion LIKE TRIM(@Descripcion) 
-								                AND idPadre = @IdPadre
-								                AND idActividad <> @IdActividad
-								                AND idProyecto = @IdProyecto)";
+                                            FROM ActividadProyecto AP
+                                            INNER JOIN Cotizacion C on AP.idCotizacion=C.idCotizacion
+                                            INNER JOIN Venta V ON V.idCotizacion=C.idCotizacion
+                                            INNER JOIN ProyectoVenta  PV ON PV.idVenta = V.idVenta
+                                            WHERE AP.descripcion LIKE TRIM(@Descripcion) 
+	                                            AND isnull(idPadre,0) = isnull(@IdPadre,0)
+	                                            AND AP.idActividad <> @IdActividad
+	                                            AND PV.idProyecto = @IdProyecto";
 
-                        int repeatActiv = await connection.ExecuteAsync(sql, actividadModel);
+                        int repeatActiv = await connection.QueryFirstAsync<int>(sqlAct, actividadModel);
 
-                        if (repeatActiv >= 0)
+                        if (repeatActiv > 0)
                             Handlers.ExceptionClose(connection, "Ya existe una actividad con esa descripción");
                     }
 
@@ -261,30 +256,14 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 			                                    idPadre = @IdPadre,
 			                                    idHermano = @IdHermano,
 			                                    fechaInicio = @FechaInicio,
-			                                    fechaFin = @FechaFin
+			                                    fechaFin = @FechaFin,
+                                                idEstado = @IdEstado
 		                                    WHERE idActividad = @IdActividad";
 
                     int hasUpdate = await connection.ExecuteAsync(update, actividadModel);
 
                     if (hasUpdate <= 0)
                         Handlers.ExceptionClose(connection, "Ocurrió un error al actualizar la actividad");
-
-                    string updateDate = $@"DECLARE @StartDate DATE = (SELECT MIN(fechaInicio) 
-											                                FROM ActividadProyecto
-											                                WHERE idProyecto = {actividadModel.IdProyecto}),
-						                                @EndDate DATE = (SELECT MAX(fechaFin) 
-											                                FROM ActividadProyecto
-											                                WHERE idProyecto = {actividadModel.IdProyecto});
-
-				                                UPDATE Proyecto
-				                                SET fechaInicio = @StartDate,
-					                                fechaFin = @EndDate
-				                                WHERE idProyecto = @IdProyecto;";
-
-                    int hasUpdateDate = await connection.ExecuteAsync(updateDate);
-
-                    if (hasUpdateDate <= 0)
-                        Handlers.ExceptionClose(connection, "Ocurrio un error al actualizar la fecha de la actividad");
 
                     return Handlers.CloseConnection(connection, trans, "Actualización exitosa");
                 }

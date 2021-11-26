@@ -18,6 +18,7 @@ namespace JKM.APPLICATION.Commands.Proyecto.UpdateActividadByProyecto
         public int Peso { get; set; }
         public int? IdPadre { get; set; }
         public int? IdHermano { get; set; }
+        public int? IdEstado { get; set; }
     }
 
     public class Validator : AbstractValidator<UpdateActividadByProyectoCommand>

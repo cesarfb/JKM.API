@@ -21,10 +21,9 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetTrabajadoresByProyecto
 		public async Task<IEnumerable<TrabajadorProyectoModel>> Handle(GetTrabajadoresByProyectoQuery request, CancellationToken cancellationToken)
 		{
 			string sql = $@"SELECT T.idTrabajador, TT.idTipoTrabajador, TT.descripcion 'descripcionTipo',
-								DU.nombre, DU.apellido, DU.fechaNacimiento
-							FROM TrabajadorProyecto TP
+								T.nombre, T.apellidoPaterno + ' ' + T.apellidoMaterno as apellido, T.fechaNacimiento
+							FROM ProyectoTrabajador TP
 							INNER JOIN Trabajador T ON T.idTrabajador = TP.idTrabajador
-							INNER JOIN DetalleUsuario DU ON DU.idDetalleUsuario = T.idDetalleUsuario
 							INNER JOIN TipoTrabajador TT ON TT.idTipoTrabajador = T.idTipoTrabajador
 							WHERE TP.idProyecto = {request.IdProyecto}
 							ORDER BY TT.idTipoTrabajador DESC";
