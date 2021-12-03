@@ -105,8 +105,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
 
             sql += $@"SELECT COUNT(1) 
 					  FROM ProyectoTrabajador 
-					  WHERE idTrabajador = {idTrabajador}
-                        AND idProyecto != {idProyecto};";
+					  WHERE idTrabajador = {idTrabajador};";
 
             using (TransactionScope trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             using (IDbConnection connection = _conexion)
@@ -127,7 +126,7 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                         if (existTrab <= 0)
                             Handlers.ExceptionClose(connection, "No se encontró al trabajador");
 
-                        if (existTrabProy >= 0)
+                        if (existTrabProy > 0)
                             Handlers.ExceptionClose(connection, "El trabajador ya se encuentra asignado a un proyecto");
                     }
 
@@ -139,15 +138,6 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
                     int hasInsert = await connection.ExecuteAsync(insert, new { IdTrabajador = idTrabajador, IdProyecto = idProyecto });
 
                     if (hasInsert <= 0)
-                        Handlers.ExceptionClose(connection, "No se pudo asignar al trabajador al proyecto");
-
-                    string update = $@"UPDATE Trabajador
-		                                    SET idEstado = 2
-		                                    WHERE idTrabajador = {idTrabajador};";
-
-                    int hasUpdate = await connection.ExecuteAsync(update);
-
-                    if (hasUpdate <= 0)
                         Handlers.ExceptionClose(connection, "No se pudo asignar al trabajador al proyecto");
 
                     return Handlers.CloseConnection(connection, trans, "Se asigno el trabajador al proyecto");
