@@ -28,7 +28,7 @@ namespace JKM.API.Controllers
         }
 
         [HttpGet]
-        [SwaggerOperation("Retorna los usarios por pagina")]
+        [SwaggerOperation("Retorna los usuarios por pagina")]
         [SwaggerResponse(200, "Retorna los usuarios", typeof(IEnumerable<UsuarioModel>))]
         [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
         public async Task<IActionResult> GetUsuarioPaginado()
