@@ -8,22 +8,23 @@ namespace JKM.APPLICATION.Aggregates
     public class PedidoModelPaginado
     {
         public int IdPedido { get; set; }
+        public string CodigoOrden { get; set; }
         public DateTime FechaRegistro { get; set; }
         [JsonProperty("fechaRegistroString")]
-        public string FechaRegistroString
+        public string fechaRegistroString
         {
             get
             {
                 return FechaRegistro.ToString("yyyy-MM-dd");
             }
         }
-        public DateTime FechaEntrega { get; set; }
+        public DateTime? FechaEntrega { get; set; }
         [JsonProperty("fechaEntregaString")]
-        public string FechaEntregaString
+        public string fechaEntregaString
         {
             get
             {
-                return FechaEntrega.ToString("yyyy-MM-dd");
+                return FechaEntrega?.ToString("yyyy-MM-dd");
             }
         }
         public int IdEstado { get; set; }
@@ -47,16 +48,19 @@ namespace JKM.APPLICATION.Aggregates
         public string Email { get; set; }
         public int Cantidad { get; set; }
         public float PrecioProd { get; set; }
+        public float PrecioTotal { get; set; }
         public int IdProducto { get; set; }
         public string Codigo { get; set; }
         public string Nombre { get; set; }
         public string Imagen { get; set; }
+        public string Cliente { get; set; }
     }
     public class PedidoModelFormat : PedidoModelPaginado
     {
         public int Precio { get; set; }
         public string Solicitante { get; set; }
         public string Email { get; set; }
+        public string Cliente { get; set; }
         public List<Pedidos> Pedidos { get; set; }
     }
 
@@ -68,5 +72,10 @@ namespace JKM.APPLICATION.Aggregates
         public string Codigo { get; set; }
         public string Nombre { get; set; }
         public string Imagen { get; set; }
+    }
+
+    public class EstadosPedidoModel
+    {
+
     }
 }

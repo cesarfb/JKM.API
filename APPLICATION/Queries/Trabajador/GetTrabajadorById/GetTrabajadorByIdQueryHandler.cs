@@ -20,7 +20,7 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadorById
 		public async Task<TrabajadorModel> Handle(GetTrabajadorByIdQuery request, CancellationToken cancellationToken)
 		{
 			string sql = $@"SELECT T.idTrabajador, DU.nombre, DU.apellido, DU.fechaNacimiento,
-								TT.idTipoTrabajador, TT.descripcion 'DescripcionTipo', TT.precioReferencial,
+								TT.idTipoTrabajador, TT.descripcion 'DescripcionTipo', TT.precioReferencial,  TT.nombre 'nombreTipo',
 								ET.idEstado, ET.descripcion 'DescripcionEstado'
 							FROM Trabajador T
 							INNER JOIN DetalleUsuario DU ON (DU.idDetalleUsuario = T.idDetalleUsuario)

@@ -8,6 +8,7 @@ using IronPdf;
 using System.Linq;
 using IronPdf.Rendering;
 using JKM.APPLICATION.Commands.Notification.RecuperarUsuario;
+using JKM.APPLICATION.Commands.Notification.EnviarCotizacion;
 
 namespace JKM.APPLICATION.Utils
 {
@@ -34,12 +35,84 @@ namespace JKM.APPLICATION.Utils
             .Replace("{MENSAJE}", model.Mensaje);
         }
 
-        public static string CotizacionHtml(CotizacionModel cotizacion, IEnumerable<TipoTrabajadorModel> trabajadores)
+        public static string CotizacionHtml(EnviarCotizacionCommand cotizacion)
         {
             return ReadPhysicalFile(Assets.CotizacionHtml)
-            .Replace("{LOGO}", Assets.Logo);
-            //.Replace("{PRODUCTOS}, )
+            .Replace("{LOGO}", Assets.Logo)
+            .Replace("{EMPRESA}", cotizacion.Empresa)
+            .Replace("{EMAIL}", cotizacion.EmailAddress)
+            .Replace("{NOMBRE}", cotizacion.Nombre)
+            .Replace("{TELEFONO}", cotizacion.Telefono)
+            .Replace("{PRODUCTO_SERVICIO}", AddProductosServiciosCotizacion(cotizacion))
+            .Replace("{MENSAJE}", cotizacion.Mensaje);
         }
+
+        public static string AddProductosServiciosCotizacion(EnviarCotizacionCommand cotizacion)
+        {
+            string html = "";
+            List<DetalleOrdenModel> products = new List<DetalleOrdenModel>();
+            if (cotizacion.Productos.Count > 0)
+            {
+                cotizacion.Productos.ForEach(prod =>
+                {
+                    products.Add(new DetalleOrdenModel
+                    {
+                        precio = prod.Precio,
+                        cantidad = prod.Cantidad,
+                        codigoProducto = prod.Codigo,
+                        idDetalleOrden = prod.IdCatalogo,
+                        idProducto = prod.IdCatalogo,
+                        imagen = prod.Imagen,
+                        nombreProducto = prod.Nombre
+                    });
+                });
+            }
+
+            if (products.Count > 0)
+            {
+                html += $@"<tr>
+                            <td>
+                                <h3 style='padding: 20px 0;'> Productos </h3>
+                                 <table class='center-table formulario'>
+                                    <thead>
+                                        <tr style = 'background-color: #7469e5;' >
+                                            <th> Id </th>
+                                            <th> Nombre </th>
+                                            <th> Codigo </th>
+                                            <th> Cantidad </th>
+                                            <th> Precio U</th>
+                                            <th> Precio T</th>
+                                        </tr>
+                                    </thead>";
+
+                html += AddProduct(products);
+
+                html += $@"</table>
+                        </td>
+                    </tr>";
+            }
+
+            if (cotizacion.Servicios.Count > 0)
+            {
+                html += $@"<tr>
+                            <td>
+                                <h3 style='padding: 20px 0;'> Servicios </h3>
+                                 <table class='center-table formulario'>
+                                    <thead>
+                                        <tr style ='background-color: #7469e5;' >
+                                            <th> Nombre </th>
+                                            <th> Descripcion </th>
+                                        </tr>
+                                    </thead>";
+
+                html += AddServicio(cotizacion.Servicios);
+                html += $@" </table>
+                        </td>
+                    </tr>";
+            }
+            return html;
+        }
+
 
         public static void ProductosCotizacionPDF(CotizacionModel empresa, List<DetalleOrdenModel> productos, string nameFile)
         {
@@ -80,6 +153,23 @@ namespace JKM.APPLICATION.Utils
                                </tr>";
             return productHtml;
         }
+
+        private static string AddServicio(List<ServicioEmailModel> services)
+        {
+            if (services.Count == 0) return "";
+
+            string serviceHtml = "";
+
+            services.ForEach(serv =>
+            {
+                serviceHtml += $@" <tr>
+                                        <td style='font-weight: bold;'> {serv.Nombre} </td>
+                                        <td style='font-weight: bold;'> {serv.Descripcion} </td>
+                                    </tr>";
+            });
+            return serviceHtml;
+        }
+
 
         public static void ActividadesCotizacionPDF(CotizacionModel empresa, List<ActividadCotizancionTreeNode> actividades, string nameFile)
         {

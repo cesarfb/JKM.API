@@ -10,6 +10,7 @@ namespace JKM.PERSISTENCE.Repository.Auth
         public string Username { get; set; }
         public string Password { get; set; }
         public int IdDetalleUsuario { get; set; }
+        public int IdEstado { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string FechaNacimiento { get; set; }

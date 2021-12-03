@@ -7,7 +7,7 @@ namespace JKM.APPLICATION.Aggregates
     public class TipoTrabajador
     {
         public int id { get; set; }
-
+        public string nombre { get; set; }
         public decimal precioReferencial { get; set; }
         public string descripcion { get; set; }
     }
@@ -43,6 +43,7 @@ namespace JKM.APPLICATION.Aggregates
         private int IdTipoTrabajador { get; set; }
         private string DescripcionTipo { get; set; }
         private decimal PrecioReferencial { get; set; }
+        private string NombreTipo { get; set; }
 
         public TipoTrabajador Tipo
         {
@@ -52,7 +53,8 @@ namespace JKM.APPLICATION.Aggregates
                 {
                     id = IdTipoTrabajador,
                     descripcion = DescripcionTipo,
-                    precioReferencial = PrecioReferencial
+                    precioReferencial = PrecioReferencial,
+                    nombre = NombreTipo
                 };
             }
         }

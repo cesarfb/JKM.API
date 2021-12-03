@@ -1,11 +1,8 @@
 ﻿using Dapper;
 using JKM.PERSISTENCE.Repository.Proyecto;
 using JKM.UTILITY.Utils;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using static Dapper.SqlMapper;
@@ -92,10 +89,13 @@ namespace JKM.PERSISTENCE.Repository.Venta
                             if (proyectoModel.IdProyecto != null)
                             {
                                 //Insertar Tabla Pedido
-                                string insertPedido = $@"INSERT INTO Pedido
-                                        	            (fechaRegistro, idVenta)
+                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR(20) = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
+                                                         DECLARE @Codigo NVARCHAR(20) = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
+                                                    INSERT INTO Pedido
+                                        	            (fechaRegistro, idVenta, codigo)
                                                    VALUES 
-                                        	            (GETDATE(), @IdVenta);";
+                                        	            (GETDATE(), @IdVenta, @Codigo);
+                                                    SELECT SCOPE_IDENTITY()";
 
                                 int hasInsertPedido = await connection.ExecuteAsync(insertPedido, ventaModel);
 
@@ -116,10 +116,12 @@ namespace JKM.PERSISTENCE.Repository.Venta
                             else
                             {
                                 //Insertar Tabla Pedido
-                                string insertPedido = $@"INSERT INTO Pedido
-                                        	            (fechaRegistro, idVenta, idEstado)
+                                string insertPedido = $@"DECLARE @IdCodigo NVARCHAR(20) = (SELECT CAST(IDENT_CURRENT('pedido') + 1 AS NVARCHAR));
+                                                         DECLARE @Codigo NVARCHAR(20) = (SELECT 'ORD-' + RIGHT('000'+ @IdCodigo, 3));
+                                                    INSERT INTO Pedido
+                                        	            (fechaRegistro, idVenta, idEstado, codigo)
                                                    VALUES 
-                                        	            (GETDATE(), @IdVenta, 1);";
+                                        	            (GETDATE(), @IdVenta, 1, @Codigo);";
 
                                 int hasInsertPedido = await connection.ExecuteAsync(insertPedido, ventaModel);
 

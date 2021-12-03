@@ -22,7 +22,7 @@ namespace JKM.APPLICATION.Queries.Trabajador.GetTrabajadorByEstado
         {
             string sql = $@"SELECT T.idTrabajador, T.nombre, T.apellidoPaterno, T.apellidoMaterno, T.fechaNacimiento,
 							       ET.idEstado, ET.descripcion 'descripcionEstado',
-							       TT.idTipoTrabajador, TT.descripcion 'descripcionTipo', TT.precioReferencial
+							       TT.idTipoTrabajador, TT.descripcion 'descripcionTipo', TT.precioReferencial, TT.nombre 'nombreTipo'
 					        FROM Trabajador T 
 					        INNER JOIN EstadoTrabajador ET ON ET.idEstado = T.idEstado
 					        INNER JOIN TipoTrabajador TT ON TT.idTipoTrabajador = T.idTipoTrabajador
