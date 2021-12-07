@@ -70,23 +70,7 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetActividadesByCotizacion
                                                                                                 IdEstado = actividadPrimerHijo.IdEstado,
                                                                                                 DescripcionEstado = actividadPrimerHijo.DescripcionEstado,
                                                                                                 Profundidad = 2
-                                                                                            },
-                                                                                            children = (from actividadSegundoHijo in actividades
-                                                                                                    where (actividadSegundoHijo.IdPadre == actividadPrimerHijo.IdActividad)
-                                                                                                    select new ActividadCotizancionTreeNode
-                                                                                                    {
-                                                                                                        data = new ActividadCotizacionModel()
-                                                                                                        {
-                                                                                                            IdActividad = actividadSegundoHijo.IdActividad,
-                                                                                                            Descripcion = actividadSegundoHijo.Descripcion,
-                                                                                                            Peso = actividadSegundoHijo.Peso,
-                                                                                                            IdPadre = actividadSegundoHijo.IdPadre,
-                                                                                                            IdHermano = actividadSegundoHijo.IdHermano,
-                                                                                                            IdEstado = actividadSegundoHijo.IdEstado,
-                                                                                                            DescripcionEstado = actividadSegundoHijo.DescripcionEstado,
-                                                                                                            Profundidad = 3
-                                                                                                        }
-                                                                                                    })
+                                                                                            }
                                                                                         })
                                                                             });
 
