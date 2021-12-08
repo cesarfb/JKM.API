@@ -16,6 +16,7 @@ using JKM.APPLICATION.Aggregates;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using JKM.APPLICATION.Queries.Proyecto.GetProductosByProyecto;
 
 namespace JKM.API.Controllers
 {
@@ -129,6 +130,15 @@ namespace JKM.API.Controllers
             request.IdProyecto = idProyecto;
             request.IdActividad = idActividad;
             return Ok(await _mediator.Send(request));
+        }
+
+        [HttpGet(template: "{idProyecto}/Producto")]
+        [SwaggerOperation("Retorna a los productos para un proyecto")]
+        [SwaggerResponse(200, "Retorna los productos y sus cantidades", typeof(DetalleOrdenModel))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> GetProductosByProyecto(int idProyecto)
+        {
+            return Ok(await _mediator.Send(new GetProductosByProyectoQuery { IdProyecto = idProyecto }));
         }
     }
 }

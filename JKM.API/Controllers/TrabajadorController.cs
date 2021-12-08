@@ -6,6 +6,7 @@ using JKM.APPLICATION.Queries.Trabajador.GetTipoTrabajador;
 using JKM.APPLICATION.Queries.Trabajador.GetTrabajadorByEstado;
 using JKM.APPLICATION.Queries.Trabajador.GetTrabajadorById;
 using JKM.APPLICATION.Queries.Trabajador.GetEstadoTrabajador;
+using JKM.APPLICATION.Queries.Trabajador.GetTrabajadorDisponibleProyecto;
 using JKM.UTILITY.Utils;
 using JKM.APPLICATION.Aggregates;
 using System.Collections.Generic;
@@ -139,6 +140,15 @@ namespace JKM.API.Controllers
         {
             request.IdTipoTrabajador = idTipoTrabajador;
             return Ok(await _mediator.Send(request));
+        }
+
+        [HttpGet(template: "Disponible")]
+        [SwaggerOperation("Retorna los trabajadores disponibles")]
+        [SwaggerResponse(200, "Retorna los trabajadores", typeof(IEnumerable<TrabajadorModel>))]
+        [SwaggerResponse(400, "Ocurrio un error de validacion", typeof(ErrorModel))]
+        public async Task<IActionResult> GetTrabajadorDisponible()
+        {
+            return Ok(await _mediator.Send(new GetTrabajadorDisponibleProyectoQuery()));
         }
     }
 }
