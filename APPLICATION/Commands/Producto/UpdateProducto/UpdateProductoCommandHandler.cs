@@ -18,7 +18,7 @@ namespace JKM.APPLICATION.Commands.Producto.UpdateProducto
         public async Task<ResponseModel> Handle(UpdateProductoCommand request, CancellationToken cancellationToken)
         {
             ProductoModel model = new ProductoModel();
-            model.UpdateProducto(model.IdProducto, model.Nombre, model.Codigo);
+            model.UpdateProducto(request.IdProducto, request.Nombre, request.Codigo, request.Imagen);
             return await _productoRepository.UpdateProducto(model);
         }
     }

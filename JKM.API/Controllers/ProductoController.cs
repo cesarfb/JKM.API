@@ -46,14 +46,14 @@ namespace JKM.API.Controllers
 
         [HttpPost]
         [SwaggerOperation("Agrega un producto")]
-        public async Task<IActionResult> RegisterProducto([FromQuery] RegisterProductoCommand request)
+        public async Task<IActionResult> RegisterProducto([FromBody] RegisterProductoCommand request)
         {
             return Ok(await _mediator.Send(request));
         }
 
         [HttpPut("{idProducto}")]
         [SwaggerOperation("Actualiza un producto")]
-        public async Task<IActionResult> UpdateProducto(int idProducto, [FromQuery] UpdateProductoCommand request)
+        public async Task<IActionResult> UpdateProducto(int idProducto, [FromBody] UpdateProductoCommand request)
         {
             request.IdProducto = idProducto;
             return Ok(await _mediator.Send(request));

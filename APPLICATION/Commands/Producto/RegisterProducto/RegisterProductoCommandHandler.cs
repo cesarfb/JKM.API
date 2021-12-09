@@ -18,7 +18,7 @@ namespace JKM.APPLICATION.Commands.Producto.RegisterProducto
         public async Task<ResponseModel> Handle(RegisterProductoCommand request, CancellationToken cancellationToken)
         {
             ProductoModel model = new ProductoModel();
-            model.RegisterProducto(model.Nombre, model.Codigo);
+            model.RegisterProducto(request.Nombre, request.Codigo, request.Imagen);
             return await _productoRepository.RegisterProducto(model);
         }
     }

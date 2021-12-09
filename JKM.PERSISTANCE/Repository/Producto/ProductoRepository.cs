@@ -47,9 +47,9 @@ namespace JKM.PERSISTENCE.Repository.Producto
                     }
 
                     string insert = $@"INSERT INTO Producto
-                                       (nombre, codigo)
+                                       (nombre, codigo, imagen)
                                        VALUES
-                                       (@Nombre, @Codigo)";
+                                       (@Nombre, @Codigo, @Imagen)";
 
                     int hasInsert = await connection.ExecuteAsync(insert, model);
 
@@ -99,6 +99,7 @@ namespace JKM.PERSISTENCE.Repository.Producto
                     string update = $@"UPDATE Producto
                                         SET nombre = @Nombre,
                                             codigo = @Codigo,
+                                            imagen = @Imagen
                                         WHERE idProducto = @IdProducto";
 
                     int hasUpdate = await connection.ExecuteAsync(update, model);
