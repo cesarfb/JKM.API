@@ -20,7 +20,8 @@ namespace JKM.APPLICATION.Queries.WebCliente.GetServicios
         public async Task<IEnumerable<ServicioWebModel>> Handle(GetServiciosQuery request, CancellationToken cancellationToken)
         {
             string sql = $@"SELECT S.idServicio, S.nombre, S.imagen, S.descripcion
-		                    FROM Servicio S";
+		                    FROM Servicio S
+                            WHERE S.isActive = 1";
             using (IDbConnection connection = _conexion)
             {
 

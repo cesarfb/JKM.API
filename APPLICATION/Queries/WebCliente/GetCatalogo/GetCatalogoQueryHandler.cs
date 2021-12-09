@@ -22,7 +22,8 @@ namespace JKM.APPLICATION.Queries.WebCliente.GetProductos
             string sql = $@"SELECT C.idCatalogo, C.precio, C.stock,
                             P.nombre, P.codigo, P.imagen
 		                    FROM Catalogo C
-                            INNER JOIN Producto P ON P.idProducto = C.idProducto";
+                            INNER JOIN Producto P ON P.idProducto = C.idProducto
+                            WHERE C.isActive = 1";
             using (IDbConnection connection = _conexion)
             {
 
