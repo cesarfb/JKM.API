@@ -25,13 +25,15 @@ namespace JKM.APPLICATION.Queries.Proyecto.GetProyectoPaginado
             sql += $@"SELECT 
 	                    P.idProyecto, P.nombre as nombreProyecto, MIN(AP.fechaInicio) as fechaInicio, 
 	                    MAX(AP.fechaFin) as fechaFin, P.descripcion, EP.idEstado, 
-	                    EP.descripcion 'DescripcionEstado'
+	                    EP.descripcion 'DescripcionEstado',
+	                    convert(decimal(15,2),convert(decimal,SUM(isnull(AP_FINALIZADAS.peso,0)))/convert(decimal,SUM(isnull(AP.peso,0))))*100 as PorcentajeTareasFinalizadas
                     FROM Proyecto P
                     INNER JOIN EstadoProyecto EP ON (EP.idEstado = P.idEstado)
                     INNER JOIN ProyectoVenta PV ON (PV.idProyecto=P.idProyecto)
                     INNER JOIN Venta V ON (V.idVenta = PV.idVenta)
-                    INNER JOIN Cotizacion C ON (C.idCotizacion = V.idCotizacion)
+                    INNER JOIN Cotizacion C ON (C.idCotizacion = V.idCotizacion and V.idTipo=1)
                     LEFT JOIN ActividadProyecto AP ON(AP.idCotizacion =  C.idCotizacion)
+                    LEFT JOIN ActividadProyecto AP_FINALIZADAS ON(AP_FINALIZADAS.idActividad =  AP.idActividad AND AP_FINALIZADAS.idEstado=3)
                     GROUP BY P.idProyecto, P.nombre, P.descripcion, 
 	                    EP.descripcion, EP.idEstado
                    

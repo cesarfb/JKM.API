@@ -32,7 +32,7 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
                         CASE WHEN C.idEstado = 1
                                     AND ((C.idTipoCotizacion = 1
 			                        AND ISNULL(TRIM(C.descripcion),'') <> ''
-			                        AND C.precioCotizacion > 0
+			                        AND isnull(C.precioCotizacion,0) > 0
 			                        AND (SELECT COUNT(1) 
 				                        FROM TipoTrabajadorCotizacion 
 				                        WHERE idCotizacion = C.idCotizacion) > 0
@@ -42,7 +42,8 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetCotizacionPaginado
                                     OR (C.idTipoCotizacion = 2
                                         AND (SELECT COUNT(1) 
 				                        FROM DetalleOrden
-				                        WHERE idCotizacion = C.idCotizacion) > 0))
+				                        WHERE idCotizacion = C.idCotizacion) > 0)
+                                        AND isnull(C.precioCotizacion,0)  > 0)
 	                        THEN 1
 	                        ELSE 0 END AS 'canCotizar'
                         FROM Cotizacion C 

@@ -7,9 +7,12 @@ namespace JKM.APPLICATION.Aggregates
 {
     public class ActividadProyectoModel
     {
+
         public int IdActividad { get; set; }
         public string Descripcion { get; set; }
+        [JsonProperty("fechaInicio")]
         public DateTime? FechaInicio { get; set; }
+        [JsonProperty("fechaFin")]
         public DateTime? FechaFin { get; set; }
         public int Peso { get; set; }
         public string Prioridad
@@ -44,7 +47,13 @@ namespace JKM.APPLICATION.Aggregates
                 };
             }
         }
-        public IEnumerable<ActividadProyectoModel> Hijo { get; set; }
+        public int Profundidad { get; set; }
+    }
+
+    public class ActividadProyectoTreeNode
+    {
+        public ActividadProyectoModel data { get; set; }
+        public IEnumerable<ActividadProyectoTreeNode>? children { get; set; }
     }
 
     public class ProyectoModel
@@ -57,6 +66,7 @@ namespace JKM.APPLICATION.Aggregates
         public string Ruc { get; set; }
         public int? IdCliente { get; set; }
         public decimal? Precio { get; set; }
+        public decimal? PorcentajeTareasFinalizadas { get; set; }
         private DateTime? FechaInicio { get; set; }
         [JsonProperty("fechaInicio")]
         public string FechaInicioString

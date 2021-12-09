@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace JKM.APPLICATION.Queries.Proyecto.GetActividadesByProyecto
 {
-    public class GetActividadesByProyectoQuery : IRequest<IEnumerable<ActividadProyectoModel>>
+    public class GetActividadesByProyectoQuery : IRequest<IEnumerable<ActividadProyectoTreeNode>>
     {
         public int IdProyecto { get; set; }
     }

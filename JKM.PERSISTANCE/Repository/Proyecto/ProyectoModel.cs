@@ -46,9 +46,11 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
         public int? IdPadre { get; set; }
         public int? IdHermano { get; set; }
         public IEnumerable<ActividadProyectoModel> Hijo { get; set; }
+        public int? IdEstado { get; set; }
 
         public void UpdateActividad(string descripcion = "", int peso = 0, int? idPadre = 0,
-            int? idHermano = 0, int idActividad = 0, DateTime? fechaInicio = null, DateTime? fechaFin = null)
+            int? idHermano = 0, int idActividad = 0, DateTime? fechaInicio = null, DateTime? fechaFin = null,
+            int? idEstado = 0, int idProyecto = 0)
         {
             IdActividad = idActividad;
             Descripcion = descripcion;
@@ -57,6 +59,8 @@ namespace JKM.PERSISTENCE.Repository.Proyecto
             IdHermano = idHermano;
             FechaInicio = fechaInicio;
             FechaFin = fechaFin;
+            IdEstado = idEstado;
+            IdProyecto = idProyecto;
         }
     }
 }
