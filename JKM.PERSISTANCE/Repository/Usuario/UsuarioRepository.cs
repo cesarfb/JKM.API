@@ -29,6 +29,30 @@ namespace JKM.PERSISTENCE.Repository.Usuario
                 {
                     connection.Open();
 
+                    //Comprobamos si ya existe un Usuario con nombre y apellido
+                    string sql = $@"SELECT COUNT(1) 
+                                    FROM 
+                                        DetalleUsuario 
+                                    WHERE 
+                                        nombre = '{usuarioModel.Nombre}' and apellido = '{usuarioModel.Apellido}';";
+
+                    int existeUsuario = await connection.QueryFirstAsync<int>(sql);
+
+                    if (existeUsuario == 1)
+                        Handlers.ExceptionClose(connection, "El nombre y/o apellido del Usuario ya se encuentra registrado");
+
+                    //Comprobamos si ya existe un Usuario con nombre de usuario
+                    string sqlNomUsuario = $@"  SELECT COUNT(1) 
+                                                FROM 
+                                                    Usuario 
+                                                WHERE 
+                                                    username = '{usuarioModel.Username}';";
+
+                    int existeNomUsuario = await connection.QueryFirstAsync<int>(sqlNomUsuario);
+
+                    if (existeNomUsuario == 1)
+                        Handlers.ExceptionClose(connection, "El nombre de usuario ya se encuentra registrado");
+
                     //Registro Tabla Detalle Usuario
                     string insertDetalleUsuario = $@"INSERT INTO DetalleUsuario
                                                         (nombre, apellido, email, fechaNacimiento)
