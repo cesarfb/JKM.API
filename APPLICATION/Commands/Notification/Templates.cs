@@ -47,6 +47,12 @@ namespace JKM.APPLICATION.Utils
             .Replace("{MENSAJE}", cotizacion.Mensaje);
         }
 
+        public static string AceptarCotizacionHtml()
+        {
+            return ReadPhysicalFile(Assets.AceptarCotizacionHtml)
+           .Replace("{LOGO}", Assets.Logo);
+        }
+
         public static string AddProductosServiciosCotizacion(EnviarCotizacionCommand cotizacion)
         {
             string html = "";
@@ -114,17 +120,9 @@ namespace JKM.APPLICATION.Utils
         }
 
 
-        public static void ProductosCotizacionPDF(CotizacionModel empresa, List<DetalleOrdenModel> productos, string nameFile)
+        public static string ProductosCotizacionPDF(string html, List<DetalleOrdenModel> productos)
         {
-            string html = ReadPhysicalFile(Assets.TemplateProductosCotizacionPDF)
-            .Replace("{LOGO}", Assets.Logo)
-            .Replace("{ORDER}", empresa.idCotizacion.ToString())
-            .Replace("{DATE}", DateTime.Now.ToString("dd/MM/yyyy"))
-            .Replace("{EMPRESA}", empresa.razonSocial)
-            .Replace("{SOLICITANTE}", empresa.solicitante)
-            .Replace("{PRODUCTOS}", AddProduct(productos));
-
-            HtmlToPdf(html, nameFile);
+            return html.Replace("{PRODUCTOS}", AddProduct(productos));
         }
 
         private static string AddProduct(List<DetalleOrdenModel> products)
@@ -132,7 +130,18 @@ namespace JKM.APPLICATION.Utils
             decimal precioTotal = 0;
             if (products.Count == 0) return "";
 
-            string productHtml = "";
+            string productHtml = $@"<table>
+            <thead>
+                <tr>
+                    <th> Product Id </th>
+                    <th> Nombre del producto </th>
+                    <th> SKU </th>
+                    <th> Cantidad </th>
+                    <th> Precio Unitario </th>
+                    <th> Precio Total </th>
+                </tr>
+            </thead>
+            <tbody>";
 
             products.ForEach(prod =>
             {
@@ -150,7 +159,9 @@ namespace JKM.APPLICATION.Utils
                                    <td colspan='4'></td >
                                    <td style='font-weight: bold;'> Total </td >
                                    <td style='font-weight: bold;'> S/ {precioTotal} </td>
-                               </tr>";
+                               </tr>
+ </tbody>
+        </table>";
             return productHtml;
         }
 
@@ -171,17 +182,9 @@ namespace JKM.APPLICATION.Utils
         }
 
 
-        public static void ActividadesCotizacionPDF(CotizacionModel empresa, List<ActividadCotizancionTreeNode> actividades, string nameFile)
+        public static string ActividadesCotizacionPDF(string html, List<ActividadCotizancionTreeNode> actividades)
         {
-            string html = ReadPhysicalFile(Assets.TemplateActividadesCotizacionPDF)
-            .Replace("{LOGO}", Assets.Logo)
-            .Replace("{ORDER}", empresa.idCotizacion.ToString())
-            .Replace("{DATE}", DateTime.Now.ToString("dd/MM/yyyy"))
-            .Replace("{EMPRESA}", empresa.razonSocial)
-            .Replace("{SOLICITANTE}", empresa.solicitante)
-            .Replace("{ACTIVIDADES}", AddActividades(actividades));
-
-            HtmlToPdf(html, nameFile);
+            return html.Replace("{ACTIVIDADES}", AddActividades(actividades));
         }
 
         private static string AddActividades(List<ActividadCotizancionTreeNode> actividades)

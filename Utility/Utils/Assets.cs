@@ -7,8 +7,6 @@
         public static string RecuperarUsuarioHtml = "Reports/Templates/RecuperarUsuarioHtml.html";
         public static string ContactUsHtml = "Reports/Templates/ContactUsHtml.html";
         public static string CotizacionHtml = "Reports/Templates/CotizacionHtml.html";
-
-        public static string TemplateProductosCotizacionPDF = "Reports/Templates/ProductosCotizacionPDF.html";
-        public static string TemplateActividadesCotizacionPDF = "Reports/Templates/ActividadesCotizacionPDF.html";
+        public static string AceptarCotizacionHtml = "Reports/Templates/AceptarCotizacionHtml.html";
     }
 }

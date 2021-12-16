@@ -37,8 +37,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetDetalleOrdenByCotizacion
 
                     connection.Close();
 
-                    if (detalleOrden.AsList().Count == 0) throw new ArgumentNullException();
-
                     return detalleOrden;
                 }
                 catch (SqlException err)

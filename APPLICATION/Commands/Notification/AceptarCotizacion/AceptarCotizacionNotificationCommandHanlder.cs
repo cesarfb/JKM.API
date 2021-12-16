@@ -36,23 +36,13 @@ namespace JKM.APPLICATION.Commands.Notification.AceptarCotizacion
 
             using (MailMessage mail = _mail)
             {
-                if (productos.ToList().Count > 0)
-                {
-                    productPDf = "producto-N°" + ran.Next(1, 100000000);
-                    Templates.ProductosCotizacionPDF(cotizacion, productos.ToList(), productPDf);
-                    mail.Attachments.Add(new Attachment($@"Reports/Files/{productPDf}.pdf"));
-                }
-                if (actividades.ToList().Count > 0)
-                {
-                    actividadesPdf = "actividades-N°" + ran.Next(1, 100000000);
-                    Templates.ActividadesCotizacionPDF(cotizacion, actividades.ToList(), actividadesPdf);
-                    mail.Attachments.Add(new Attachment($@"Reports/Files/{actividadesPdf}.pdf"));
-                }
+                var html = Templates.AceptarCotizacionHtml();
+                    html = Templates.ProductosCotizacionPDF(html, productos.ToList());
+                    html = Templates.ActividadesCotizacionPDF(html, actividades.ToList());
 
                 mail.To.Add(cotizacion.email);
                 mail.Subject = "Solicitud de Servicio";
-                //mail.Body = Templates.CotizacionHtml(cotizacion, trabajadores);
-
+                mail.Body = html;
                 using (SmtpClient smtp = _smtp)
                 {
                     await smtp.SendMailAsync(mail);

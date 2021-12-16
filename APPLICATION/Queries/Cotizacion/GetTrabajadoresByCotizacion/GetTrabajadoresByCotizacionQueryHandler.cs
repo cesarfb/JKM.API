@@ -36,8 +36,6 @@ namespace JKM.APPLICATION.Queries.Cotizacion.GetTrabajadoresByCotizacion
 
                     connection.Close();
 
-                    if (trabajadores.AsList().Count == 0) throw new ArgumentNullException();
-
                     return trabajadores;
                 }
                 catch (SqlException err)
